@@ -1,0 +1,4 @@
+enum Types{
+  accumulatePoints,
+  Redeem,
+}

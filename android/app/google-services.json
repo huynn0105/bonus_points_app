@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "376016726467",
+    "project_id": "accumulatepoints-49382",
+    "storage_bucket": "accumulatepoints-49382.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:376016726467:android:f8ea421e55ff74727b3576",
+        "android_client_info": {
+          "package_name": "com.example.bonus_points_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "376016726467-ssm1ccau7ahunsj6h8cmkhptfd0naplm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bonus_points_app",
+            "certificate_hash": "1fadd5bcbd5c365b26db6c6e4e3656b800712a13"
+          }
+        },
+        {
+          "client_id": "376016726467-7i24s0p75ice1m58cctfld1fjpcr90qd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyYOSmbLx-gM9xPBLS6RtxhzmCa1IPXr4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "376016726467-7i24s0p75ice1m58cctfld1fjpcr90qd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
