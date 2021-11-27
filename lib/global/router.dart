@@ -49,7 +49,10 @@ class MyRouter {
         );
       case detail:
         return _buildRouteNavigation(
-          settings,
+          settings.copyWith(
+              name: settings.name! +
+                  "?id=" +
+                  (settings.arguments as CustomerUIModel).customerId!),
           CustomerDetailScreen(
             customer: settings.arguments as CustomerUIModel,
           ),

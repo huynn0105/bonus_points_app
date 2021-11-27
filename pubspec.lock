@@ -190,6 +190,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  cloud_firestore:
+    dependency: "direct main"
+    description:
+      name: cloud_firestore
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.0"
+  cloud_firestore_platform_interface:
+    dependency: transitive
+    description:
+      name: cloud_firestore_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.4.5"
+  cloud_firestore_web:
+    dependency: transitive
+    description:
+      name: cloud_firestore_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.5.0"
   code_builder:
     dependency: transitive
     description:
@@ -274,13 +295,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.2"
-  firedart:
+  firebase_core:
     dependency: "direct main"
     description:
-      name: firedart
+      name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.0+1"
+    version: "1.10.0"
+  firebase_core_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_core_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.1.0"
+  firebase_core_web:
+    dependency: transitive
+    description:
+      name: firebase_core_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
   fixnum:
     dependency: transitive
     description:
@@ -340,6 +375,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_web_plugins:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -368,13 +408,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.2"
-  googleapis_auth:
-    dependency: transitive
-    description:
-      name: googleapis_auth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
   graphs:
     dependency: transitive
     description:
@@ -382,13 +415,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  grpc:
-    dependency: transitive
-    description:
-      name: grpc
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.2"
   hive:
     dependency: transitive
     description:
@@ -417,13 +443,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.13.3"
-  http2:
-    dependency: transitive
-    description:
-      name: http2
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -627,13 +646,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.3"
-  protobuf:
-    dependency: transitive
-    description:
-      name: protobuf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   provider:
     dependency: "direct main"
     description:

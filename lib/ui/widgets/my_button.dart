@@ -23,9 +23,12 @@ class MyButton extends StatelessWidget {
       onPressed: onPressed,
       child: child,
       style: ElevatedButton.styleFrom(
-        minimumSize: Size(width ?? double.infinity, height ?? 44.h),
+        minimumSize: Size(width ?? double.infinity, height ?? 50),
         primary: color,
-        elevation: 1,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
       ),
     );
   }

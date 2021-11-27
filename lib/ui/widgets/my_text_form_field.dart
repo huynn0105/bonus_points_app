@@ -8,6 +8,7 @@ class MyTextFormField extends StatelessWidget {
   final TextInputType? textInputType;
   final List<TextInputFormatter>? inputFormatters;
   final bool obscureText;
+  final FormFieldValidator<String>? validator;
   const MyTextFormField({
     Key? key,
     this.lable,
@@ -15,6 +16,7 @@ class MyTextFormField extends StatelessWidget {
     this.textInputType,
     this.inputFormatters,
     this.obscureText = false,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -22,23 +24,24 @@ class MyTextFormField extends StatelessWidget {
     return TextFormField(
       keyboardType: textInputType,
       controller: controller,
+      validator: validator,
       style: TextStyle(
         fontWeight: FontWeight.w500,
-        fontSize: 15.sp,
+        fontSize: 20,
       ),
       obscureText: obscureText,
       decoration: InputDecoration(
         label: lable,
-        contentPadding: EdgeInsets.all(16.r),
+        contentPadding: EdgeInsets.all(20.r),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
+          borderRadius: BorderRadius.circular(13.r),
         ),
         labelStyle: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 20,
           fontWeight: FontWeight.w400,
         ),
         hintStyle: TextStyle(
-          fontSize: 15.sp,
+          fontSize: 18,
           fontWeight: FontWeight.w300,
         ),
       ),

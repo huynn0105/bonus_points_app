@@ -1,4 +1,4 @@
 enum Types{
-  accumulatePoints,
-  Redeem,
+  Thuong,
+  SuaHop,
 }

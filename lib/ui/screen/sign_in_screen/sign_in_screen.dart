@@ -1,5 +1,4 @@
 import 'package:bonus_points_app/global/router.dart';
-import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
 import 'package:bonus_points_app/ui/widgets/my_text_form_field.dart';
 import 'package:flutter/material.dart';
@@ -27,65 +26,78 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(20.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            MyTextFormField(
-              lable: Text('Tên đăng nhập'),
-              controller: usernameController,
+      backgroundColor: Color(0xFFedf0f5),
+      body: Center(
+        child: SizedBox(
+          height: 360,
+          width: 450,
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
             ),
-            SizedBox(height: 16.h),
-            MyTextFormField(
-              lable: Text('Mật khẩu'),
-              controller: passwordController,
-              obscureText: true,
-            ),
-            SizedBox(height: 20.h),
-            MyButton(
-              onPressed: () {
-                if (usernameController.text == 'admin' &&
-                    passwordController.text == 'admin') {
-                  Get.offAllNamed(MyRouter.splash);
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: Text(
-                        'Tên đăng nhập hoặc mật khẩu không chính xác!',
-                        style: TextStyle(fontSize: 15.sp),
-                      ),
-                      actions: [
-                        MyButton(
-                          child: Text(
-                            'Xác nhận',
-                            style: TextStyle(
-                              fontSize: 15.sp,
+            elevation: 20,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MyTextFormField(
+                    lable: Text('Tên đăng nhập'),
+                    controller: usernameController,
+                  ),
+                  SizedBox(height: 30),
+                  MyTextFormField(
+                    lable: Text('Mật khẩu'),
+                    controller: passwordController,
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 40.h),
+                  MyButton(
+                    onPressed: () {
+                      if (usernameController.text == 'admin' &&
+                          passwordController.text == 'admin') {
+                        Get.offAllNamed(MyRouter.home);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              'Tên đăng nhập hoặc mật khẩu không chính xác!',
+                              style: TextStyle(fontSize: 15.sp),
                             ),
+                            actions: [
+                              MyButton(
+                                child: Text(
+                                  'Xác nhận',
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                  ),
+                                ),
+                                width: 80,
+                                height: 60,
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                color: Color(0xFFEA2027).withOpacity(0.86),
+                              ),
+                            ],
                           ),
-                          width: 50.w,
-                          height: 44.h,
-                          onPressed: () {
-                            Get.back();
-                          },
-                          color: Color(0xFFEA2027).withOpacity(0.86),
-                        ),
-                      ],
+                        );
+                      }
+                    },
+                    height: 70,
+                    child: Text(
+                      'Đăng nhập',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  );
-                }
-              },
-              height: 44.h,
-              child: Text(
-                'Đăng nhập',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
