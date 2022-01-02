@@ -10,13 +10,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class GhiNoScreen extends StatefulWidget {
+  const GhiNoScreen({Key? key}) : super(key: key);
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _GhiNoScreenState createState() => _GhiNoScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _GhiNoScreenState extends State<GhiNoScreen> {
   late ICustomerViewModel viewModel;
   late SimpleFontelicoProgressDialog _dialog;
   late TextEditingController controller;
@@ -27,9 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
     controller = TextEditingController();
     _dialog = SimpleFontelicoProgressDialog(
         context: context, barrierDimisable: false);
-    Future.delayed(Duration.zero, () async {
+    Future.delayed(Duration.zero, () {
       _dialog.show(message: 'Đợi một lát...');
-      await viewModel.syncData();
+      viewModel.getCustomerNo();
       _dialog.hide();
     });
     super.initState();
@@ -44,8 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: Text('Danh sách khách hàng'),
+        backgroundColor: Colors.orangeAccent,
+        leading: BackButton(
+          color: Colors.white,
+        ),
+        title: Text('Danh sách khách hàng nợ'),
         centerTitle: true,
         elevation: 0,
         titleTextStyle: TextStyle(
@@ -99,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                               ],
                             ),
-                            hintText: "Tìm kiếm khách hàng...",
+                            hintText: "Tìm kiếm khách hàng nợ...",
                             hintStyle: TextStyle(
                               color: Colors.black,
                             ),
@@ -108,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(width: 10),
                       FloatingActionButton.extended(
-                        heroTag: 'btn2',
+                        heroTag: 'btn2_2',
                         onPressed: () {
                           Get.toNamed(MyRouter.addCustomer);
                         },
@@ -128,11 +131,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             return _viewModel.customerUIs.isNotEmpty
                                 ? ListView.builder(
                                     itemCount: !_value
-                                        ? _viewModel.customerUIs.length
+                                        ? _viewModel.listCustomersNo.length
                                         : _viewModel.listSearchCustomer.length,
                                     itemBuilder: (ctx, index) {
                                       final CustomerEntity customer = !_value
-                                          ? _viewModel.customerUIs[index]
+                                          ? _viewModel.listCustomersNo[index]
                                           : _viewModel
                                               .listSearchCustomer[index];
                                       return CustomerItem(
@@ -163,31 +166,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          FloatingActionButton.extended(
-            heroTag: 'btn1_2',
-            onPressed: () {
-              Get.toNamed(MyRouter.ghiNo);
-            },
-            icon: Icon(CupertinoIcons.money_dollar),
-            label: Text('Danh sách nợ'),
-            backgroundColor: Colors.green,
-          ),
-          SizedBox(height: 20),
-          FloatingActionButton.extended(
-            heroTag: 'btn1',
-            onPressed: () async {
-              _dialog.show(message: 'Chờ một lát...');
-              await viewModel.syncData();
-              _dialog.hide();
-            },
-            icon: Icon(Icons.refresh),
-            label: Text('Làm mới danh sách'),
-            backgroundColor: Colors.deepOrange,
-          ),
-        ],
+      floatingActionButton: FloatingActionButton.extended(
+        heroTag: 'btn2_2',
+        onPressed: () {
+          Get.back();
+        },
+        icon: Icon(CupertinoIcons.money_dollar),
+        label: Text('Danh sách khách hàng'),
+        backgroundColor: Colors.green,
       ),
     );
   }

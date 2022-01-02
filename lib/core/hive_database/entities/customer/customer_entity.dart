@@ -1,45 +1,47 @@
 import 'package:bonus_points_app/core/hive_database/entities/base_entity.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'customer_entity.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-@HiveType(typeId: 1)
 class CustomerEntity extends BaseEntity {
-  @HiveField(1)
   String name;
-  @HiveField(2)
   String? phoneNumber;
-  @HiveField(3)
   String? address;
-  @HiveField(4)
-  bool pushSuccess;
-
+  int totalPointThuong;
+  int totalPointSuaLon;
+  int tienNo;
   CustomerEntity({
     String? id,
     DateTime? createTime,
     required this.name,
     this.phoneNumber,
     this.address,
-    this.pushSuccess = true,
+    this.totalPointThuong = 0,
+    this.totalPointSuaLon = 0,
+    this.tienNo = 0,
   }) : super(id: id, createTime: createTime);
 
-  @override
-  bool operator ==(Object other) {
-    return other is CustomerEntity &&
-        other.id == id &&
-        other.createTime == createTime &&
-        other.phoneNumber == phoneNumber &&
-        other.name == name &&
-        other.address == address;
-  }
 
-  bool isEqual(CustomerEntity entity) {
-    return entity.id == id &&
-        entity.createTime == createTime &&
-        entity.phoneNumber == phoneNumber &&
-        entity.name == name &&
-        entity.address == address;
+  CustomerEntity copyWith({
+    String? id,
+    DateTime? createTime,
+    String? name,
+    String? phoneNumber,
+    String? address,
+    int? totalPointThuong,
+    int? totalPointSuaLon,
+    int? tienNo,
+  }){
+    return CustomerEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createTime: createTime ?? this.createTime,
+      address: address ?? this.address,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      tienNo: tienNo ?? this.tienNo,
+      totalPointSuaLon: totalPointSuaLon ?? this.totalPointSuaLon,
+      totalPointThuong: totalPointThuong ?? this.totalPointThuong,
+    );
   }
 
   factory CustomerEntity.fromJson(Map<String, dynamic> json) =>

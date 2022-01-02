@@ -1,6 +1,7 @@
-import 'package:bonus_points_app/core/ui_model/customer_ui_model.dart';
+import 'package:bonus_points_app/core/hive_database/entities/customer/customer_entity.dart';
 import 'package:bonus_points_app/ui/screen/add_customer_screen/add_customer_screen.dart';
 import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detail_screen.dart';
+import 'package:bonus_points_app/ui/screen/ghi_no_screen/ghi_no_screen.dart';
 import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/screen/sign_in_screen/sign_in_screen.dart';
 import 'package:bonus_points_app/ui/screen/splash_screen/splash_screen.dart';
@@ -12,6 +13,7 @@ class MyRouter {
   static const String home = '/home';
   static const String addCustomer = '/addCustomer';
   static const String detail = '/detail';
+  static const String ghiNo = '/ghiNo';
 
   static PageRouteBuilder _buildRouteNavigation(
       RouteSettings settings, Widget widget) {
@@ -43,19 +45,21 @@ class MyRouter {
           settings,
           AddCustomerScreen(
             customer: settings.arguments != null
-                ? settings.arguments as CustomerUIModel
+                ? settings.arguments as CustomerEntity
                 : null,
           ),
         );
       case detail:
         return _buildRouteNavigation(
-          settings.copyWith(
-              name: settings.name! +
-                  "?id=" +
-                  (settings.arguments as CustomerUIModel).customerId!),
+          settings,
           CustomerDetailScreen(
-            customer: settings.arguments as CustomerUIModel,
+            customer: settings.arguments as CustomerEntity,
           ),
+        );
+      case ghiNo:
+        return _buildRouteNavigation(
+          settings,
+          const GhiNoScreen(),
         );
     }
   }

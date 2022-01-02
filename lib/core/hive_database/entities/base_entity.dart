@@ -1,8 +1,6 @@
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-class BaseEntity extends HiveObject {
-  @HiveField(0)
+class BaseEntity  {
   String? id;
   DateTime? createTime;
 
