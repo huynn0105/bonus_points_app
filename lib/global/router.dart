@@ -1,7 +1,7 @@
-import 'package:bonus_points_app/core/hive_database/entities/customer/customer_entity.dart';
+import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/ui/screen/add_customer_screen/add_customer_screen.dart';
 import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detail_screen.dart';
-import 'package:bonus_points_app/ui/screen/ghi_no_screen/ghi_no_screen.dart';
+import 'package:bonus_points_app/ui/screen/customer_screen/customer_screen.dart';
 import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/screen/sign_in_screen/sign_in_screen.dart';
 import 'package:bonus_points_app/ui/screen/splash_screen/splash_screen.dart';
@@ -13,7 +13,7 @@ class MyRouter {
   static const String home = '/home';
   static const String addCustomer = '/addCustomer';
   static const String detail = '/detail';
-  static const String ghiNo = '/ghiNo';
+  static const String customers = '/customers';
 
   static PageRouteBuilder _buildRouteNavigation(
       RouteSettings settings, Widget widget) {
@@ -40,12 +40,17 @@ class MyRouter {
           settings,
           HomeScreen(),
         );
+      case customers:
+        return _buildRouteNavigation(
+          settings,
+          CustomersScreen(),
+        );
       case addCustomer:
         return _buildRouteNavigation(
           settings,
           AddCustomerScreen(
             customer: settings.arguments != null
-                ? settings.arguments as CustomerEntity
+                ? settings.arguments as Customer
                 : null,
           ),
         );
@@ -53,13 +58,8 @@ class MyRouter {
         return _buildRouteNavigation(
           settings,
           CustomerDetailScreen(
-            customer: settings.arguments as CustomerEntity,
+            customer: settings.arguments as Customer,
           ),
-        );
-      case ghiNo:
-        return _buildRouteNavigation(
-          settings,
-          const GhiNoScreen(),
         );
     }
   }

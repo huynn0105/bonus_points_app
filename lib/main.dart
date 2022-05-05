@@ -10,7 +10,7 @@ import 'global/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
- 
+
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: "AIzaSyCcQaNsbUSUesVnJ5QSEgSrss5t5BXu7j8",
@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         builder: () => GetMaterialApp(
           title: 'Điểm tích luỹ',
           onGenerateRoute: (settings) => MyRouter.generateRoute(settings),
-          initialRoute: MyRouter.signin,
+          initialRoute: MyRouter.customers,
           color: Color(0xFF0A7AFF),
           theme: ThemeData(
             primarySwatch: Colors.blue,

@@ -1,5 +1,5 @@
-import 'package:bonus_points_app/core/hive_database/entities/customer/customer_entity.dart';
-import 'package:bonus_points_app/core/hive_database/entities/point_detail/point_detail_entity.dart';
+import 'package:bonus_points_app/core/model/customer/customer.dart';
+import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:bonus_points_app/core/view_model/implements/customer_view_model.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
 import 'package:bonus_points_app/global/router.dart';
@@ -21,7 +21,7 @@ class CustomerDetailScreen extends StatefulWidget {
     Key? key,
     required this.customer,
   }) : super(key: key);
-  final CustomerEntity customer;
+  final Customer customer;
 
   @override
   State<CustomerDetailScreen> createState() => _CustomerDetailScreenState();
@@ -324,7 +324,7 @@ class _ListPointDetail extends StatelessWidget {
     required this.pointType,
   }) : super(key: key);
 
-  final List<PointDetailEntity> pointDetailList;
+  final List<PointDetail> pointDetailList;
   final PointType pointType;
 
   @override

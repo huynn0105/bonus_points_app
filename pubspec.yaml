@@ -42,7 +42,7 @@ dependencies:
   bitsdojo_window: ^0.1.1+1
   firebase_core: ^1.10.0
   cloud_firestore: ^3.1.0
-
+  flutter_web_data_table: ^1.0.0
 
 
 flutter_icons:

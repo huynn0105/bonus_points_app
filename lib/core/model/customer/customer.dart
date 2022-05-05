@@ -1,16 +1,16 @@
-import 'package:bonus_points_app/core/hive_database/entities/base_entity.dart';
+import 'package:bonus_points_app/core/model/base_model.dart';
 import 'package:json_annotation/json_annotation.dart';
-part 'customer_entity.g.dart';
+part 'customer.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class CustomerEntity extends BaseEntity {
+class Customer extends BaseModel {
   String name;
   String? phoneNumber;
   String? address;
   int totalPointThuong;
   int totalPointSuaLon;
   int tienNo;
-  CustomerEntity({
+  Customer({
     String? id,
     DateTime? createTime,
     required this.name,
@@ -22,7 +22,21 @@ class CustomerEntity extends BaseEntity {
   }) : super(id: id, createTime: createTime);
 
 
-  CustomerEntity copyWith({
+    Map<String, dynamic> get values {
+    return {
+      'name': name,
+      'phoneNumber': phoneNumber,
+      'address': address,
+      'totalPointThuong': totalPointThuong,
+      'totalPointSuaLon': totalPointSuaLon,
+      'tienNo': tienNo,
+      'createTime': createTime,
+      'customer' : this,
+    };
+  }
+
+
+  Customer copyWith({
     String? id,
     DateTime? createTime,
     String? name,
@@ -32,7 +46,7 @@ class CustomerEntity extends BaseEntity {
     int? totalPointSuaLon,
     int? tienNo,
   }){
-    return CustomerEntity(
+    return Customer(
       id: id ?? this.id,
       name: name ?? this.name,
       createTime: createTime ?? this.createTime,
@@ -44,7 +58,7 @@ class CustomerEntity extends BaseEntity {
     );
   }
 
-  factory CustomerEntity.fromJson(Map<String, dynamic> json) =>
+  factory Customer.fromJson(Map<String, dynamic> json) =>
       _$CustomerEntityFromJson(json);
   Map<String, dynamic> toJson() => _$CustomerEntityToJson(this);
 }

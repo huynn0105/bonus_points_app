@@ -1,11 +1,11 @@
-import 'package:bonus_points_app/core/hive_database/entities/base_entity.dart';
+import 'package:bonus_points_app/core/model/base_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'point_detail_entity.g.dart';
+part 'point_detail.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 
-class PointDetailEntity extends BaseEntity {
+class PointDetail extends BaseModel {
 
   String customerId;
   int point;
@@ -13,7 +13,7 @@ class PointDetailEntity extends BaseEntity {
   int type; //1 AccumulatePoints //2 Redeem
  
 
-  PointDetailEntity({
+  PointDetail({
     String? id,
     DateTime? createTime,
     required this.customerId,
@@ -24,7 +24,7 @@ class PointDetailEntity extends BaseEntity {
 
 
 
-  bool isEqual(PointDetailEntity other) {
+  bool isEqual(PointDetail other) {
     return other.id == id &&
         other.createTime == createTime &&
         other.customerId == customerId &&
@@ -33,7 +33,7 @@ class PointDetailEntity extends BaseEntity {
         other.point == point;
   }
 
-  factory PointDetailEntity.fromJson(Map<String, dynamic> json) =>
+  factory PointDetail.fromJson(Map<String, dynamic> json) =>
       _$PointDetailEntityFromJson(json);
   Map<String, dynamic> toJson() => _$PointDetailEntityToJson(this);
 }

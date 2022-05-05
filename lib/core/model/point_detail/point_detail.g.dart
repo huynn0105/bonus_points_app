@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'point_detail_entity.dart';
+part of 'point_detail.dart';
 
 
 
@@ -8,8 +8,8 @@ part of 'point_detail_entity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PointDetailEntity _$PointDetailEntityFromJson(Map<String, dynamic> json) =>
-    PointDetailEntity(
+PointDetail _$PointDetailEntityFromJson(Map<String, dynamic> json) =>
+    PointDetail(
       customerId: json['customerId'] as String,
       point: json['point'] as int,
       createTime: DateTime.parse(json['createTime'] as String),
@@ -18,7 +18,7 @@ PointDetailEntity _$PointDetailEntityFromJson(Map<String, dynamic> json) =>
       type: json['type'] as int,
     );
 
-Map<String, dynamic> _$PointDetailEntityToJson(PointDetailEntity instance) =>
+Map<String, dynamic> _$PointDetailEntityToJson(PointDetail instance) =>
     <String, dynamic>{
       'customerId': instance.customerId,
       'comment': instance.comment,

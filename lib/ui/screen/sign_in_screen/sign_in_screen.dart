@@ -29,7 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
       backgroundColor: Color(0xFFedf0f5),
       body: Center(
         child: SizedBox(
-          height: 360,
+          height: 380,
           width: 450,
           child: Card(
             shape: RoundedRectangleBorder(

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'customer_entity.dart';
+part of 'customer.dart';
 
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CustomerEntity _$CustomerEntityFromJson(Map<String, dynamic> json) => CustomerEntity(
+Customer _$CustomerEntityFromJson(Map<String, dynamic> json) => Customer(
       id: json['customerId'] as String,
       name: json['name'] as String,
       createTime: DateTime.parse(json['createTime'] as String),
@@ -18,7 +18,7 @@ CustomerEntity _$CustomerEntityFromJson(Map<String, dynamic> json) => CustomerEn
       tienNo: (json['tienNo'] ?? 0) as int,
     );
 
-Map<String, dynamic> _$CustomerEntityToJson(CustomerEntity instance) =>
+Map<String, dynamic> _$CustomerEntityToJson(Customer instance) =>
     <String, dynamic>{
       'customerId': instance.id,
       'name': instance.name,

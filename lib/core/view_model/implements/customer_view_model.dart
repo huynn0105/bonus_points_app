@@ -1,5 +1,5 @@
-import 'package:bonus_points_app/core/hive_database/entities/customer/customer_entity.dart';
-import 'package:bonus_points_app/core/hive_database/entities/point_detail/point_detail_entity.dart';
+import 'package:bonus_points_app/core/model/customer/customer.dart';
+import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,17 +25,17 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   CollectionReference customers =
       FirebaseFirestore.instance.collection('customers');
 
-  List<CustomerEntity> _listSearchCustomer = [];
+  List<Customer> _listSearchCustomer = [];
 
-  List<CustomerEntity> get listSearchCustomer => _listSearchCustomer;
+  List<Customer> get listSearchCustomer => _listSearchCustomer;
 
-  List<CustomerEntity> _allCustomers = [];
+  List<Customer> _allCustomers = [];
 
   Future<void> syncData() async {
     var data = await customers.limit(50).get();
 
     _customersList = data.docs
-        .map((e) => CustomerEntity.fromJson(e.data() as Map<String, dynamic>))
+        .map((e) => Customer.fromJson(e.data() as Map<String, dynamic>))
         .toList();
 
     _customersList.sort((e1, e2) => e1.createTime!.compareTo(e2.createTime!));
@@ -47,7 +47,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   Future<void> getAllCustomers() async {
     var allData = await customers.get();
     _allCustomers = allData.docs
-        .map((e) => CustomerEntity.fromJson(e.data() as Map<String, dynamic>))
+        .map((e) => Customer.fromJson(e.data() as Map<String, dynamic>))
         .toList();
   }
 
@@ -62,11 +62,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     isSearch = true;
   }
 
-  Future<void> putCustomerFirebase(CustomerEntity entity) async {
+  Future<void> putCustomerFirebase(Customer entity) async {
     await customers.doc(entity.id!).set(entity.toJson());
   }
 
-  Future<void> updateCustomerFirebase(CustomerEntity entity) async {
+  Future<void> updateCustomerFirebase(Customer entity) async {
     await customers.doc(entity.id!).update(entity.toJson());
   }
 
@@ -75,7 +75,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> putPointDetailFirebase(
-      PointDetailEntity entity, PointType pointType) async {
+      PointDetail entity, PointType pointType) async {
     final path = checkPointType(pointType);
     await customers
         .doc(entity.customerId)
@@ -85,7 +85,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> deletePointDetailFirebase(
-      PointDetailEntity entity, PointType pointType) async {
+      PointDetail entity, PointType pointType) async {
     final path = checkPointType(pointType);
     await customers
         .doc(entity.customerId)
@@ -94,11 +94,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         .delete();
   }
 
-  List<CustomerEntity> _customersList = [];
+  List<Customer> _customersList = [];
   @override
   Future<void> addCustomer(
-      CustomerEntity model, int point, PointType pointType) async {
-    final pointDetail = PointDetailEntity(
+      Customer model, int point, PointType pointType) async {
+    final pointDetail = PointDetail(
       point: point,
       customerId: model.id!,
       comment: 'Thêm khách hàng',
@@ -127,7 +127,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     notifyListeners();
   }
 
-  Future<void> updateCustomer(CustomerEntity model) async {
+  Future<void> updateCustomer(Customer model) async {
     await updateCustomerFirebase(model);
     _customersList.removeWhere((x) => x.id == model.id);
     _customersList.insert(0, model);
@@ -142,18 +142,18 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  List<CustomerEntity> get customerUIs => _customersList;
+  List<Customer> get customerUIs => _customersList;
 
   @override
-  List<PointDetailEntity> get customerPointDetailsThuong => _pointDetailThuong;
-  List<PointDetailEntity> _pointDetailThuong = [];
+  List<PointDetail> get customerPointDetailsThuong => _pointDetailThuong;
+  List<PointDetail> _pointDetailThuong = [];
 
   Future<void> getCustomerPointDetails(String customerId) async {
     var dataPointDetailThuongFb =
         await customers.doc(customerId).collection(point_detail_thuong).get();
 
     _pointDetailThuong = dataPointDetailThuongFb.docs
-        .map((element) => PointDetailEntity.fromJson(element.data()))
+        .map((element) => PointDetail.fromJson(element.data()))
         .toList();
 
     _pointDetailThuong
@@ -163,7 +163,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         await customers.doc(customerId).collection(point_detail_sua_lon).get();
 
     _pointDetailSuaLon = dataPointDetailSuaLonFb.docs
-        .map((element) => PointDetailEntity.fromJson(element.data()))
+        .map((element) => PointDetail.fromJson(element.data()))
         .toList();
 
     _pointDetailSuaLon
@@ -173,7 +173,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         await customers.doc(customerId).collection(point_detail_ghi_no).get();
 
     _pointDetailGhiNo = dataPointDetailGhiNoFb.docs
-        .map((element) => PointDetailEntity.fromJson(element.data()))
+        .map((element) => PointDetail.fromJson(element.data()))
         .toList();
 
     _pointDetailGhiNo
@@ -184,13 +184,13 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   @override
   Future<void> addPoint(
-    CustomerEntity customer,
+    Customer customer,
     String comment,
     int point,
     int type,
     PointType pointType,
   ) async {
-    final pointEntity = PointDetailEntity(
+    final pointEntity = PointDetail(
       comment: comment,
       point: type == 1 ? point : -point,
       customerId: customer.id!,
@@ -226,7 +226,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   @override
   Future<void> deletePoint(
-      PointDetailEntity entity, PointType pointType) async {
+      PointDetail entity, PointType pointType) async {
     await deletePointDetailFirebase(entity, pointType);
 
     var customer = _allCustomers.firstWhere((x) => x.id! == entity.customerId);
@@ -259,7 +259,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  Future<void> deleteCustomer(CustomerEntity model) async {
+  Future<void> deleteCustomer(Customer model) async {
     await deleteCustomerFirebase(model.id!);
 
     _customersList.removeWhere((e) => e.id == model.id);
@@ -270,24 +270,24 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  CustomerEntity? get currentCustomer => _currentCustomer;
+  Customer? get currentCustomer => _currentCustomer;
 
-  CustomerEntity? _currentCustomer;
+  Customer? _currentCustomer;
 
-  set currentCustomer(CustomerEntity? customer) {
+  set currentCustomer(Customer? customer) {
     _currentCustomer = customer;
     notifyListeners();
   }
 
-  List<PointDetailEntity> _pointDetailSuaLon = [];
+  List<PointDetail> _pointDetailSuaLon = [];
 
-  List<PointDetailEntity> _pointDetailGhiNo = [];
-
-  @override
-  List<PointDetailEntity> get customerPointDetailsGhiNo => _pointDetailGhiNo;
+  List<PointDetail> _pointDetailGhiNo = [];
 
   @override
-  List<PointDetailEntity> get customerPointDetailsSuaLon => _pointDetailSuaLon;
+  List<PointDetail> get customerPointDetailsGhiNo => _pointDetailGhiNo;
+
+  @override
+  List<PointDetail> get customerPointDetailsSuaLon => _pointDetailSuaLon;
 
   bool _isSearch = false;
 
@@ -298,15 +298,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     notifyListeners();
   }
 
+  List<PointDetail> _customerPointDetails = [];
   @override
-  List<CustomerEntity> get listCustomersNo => _listCustomersNo;
+  List<PointDetail> get customerPointDetails => _customerPointDetails;
 
-  List<CustomerEntity> _listCustomersNo = [];
-
-  void getCustomerNo(){
-    _listCustomersNo =  _allCustomers.where((x) => x.tienNo > 0).toList();
-    notifyListeners();
-  }
 }
 
 enum PointType {

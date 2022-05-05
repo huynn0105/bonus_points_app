@@ -1,10 +1,8 @@
-import 'package:bonus_points_app/core/hive_database/entities/customer/customer_entity.dart';
+import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/core/view_model/implements/customer_view_model.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
-import 'package:bonus_points_app/global/router.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
 import 'package:bonus_points_app/ui/widgets/my_text_form_field.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +15,7 @@ class AddCustomerScreen extends StatefulWidget {
     Key? key,
     this.customer,
   }) : super(key: key);
-  final CustomerEntity? customer;
+  final Customer? customer;
 
   @override
   _AddCustomerScreenState createState() => _AddCustomerScreenState();
@@ -210,7 +208,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
     if (widget.customer == null) {
       final point = int.tryParse(pointController.text) ?? 0;
-      CustomerEntity customerEntity = CustomerEntity(
+      Customer customerEntity = Customer(
         name: usernameController.text.trim(),
         phoneNumber: phoneController.text.trim(),
         totalPointThuong: pointType == PointType.thuong ? point : 0,
@@ -220,7 +218,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       );
       await viewModel.addCustomer(customerEntity, point, pointType);
     } else {
-      CustomerEntity customerEntity = widget.customer!.copyWith(
+      Customer customerEntity = widget.customer!.copyWith(
         address: addressController.text.trim(),
         phoneNumber: phoneController.text.trim(),
         name: usernameController.text.trim(),

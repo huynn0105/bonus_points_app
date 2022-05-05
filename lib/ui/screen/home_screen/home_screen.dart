@@ -1,4 +1,4 @@
-import 'package:bonus_points_app/core/hive_database/entities/customer/customer_entity.dart';
+import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
 import 'package:bonus_points_app/global/router.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
@@ -120,18 +120,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 30),
                   Expanded(
-                    child: Selector<ICustomerViewModel, bool>(
-                        selector: (_, _vm) => _vm.isSearch,
-                        builder: (context, _value, __) {
-                          return Consumer<ICustomerViewModel>(
+                    child: Consumer<ICustomerViewModel>(
                               builder: (_, _viewModel, __) {
                             return _viewModel.customerUIs.isNotEmpty
                                 ? ListView.builder(
-                                    itemCount: !_value
+                                    itemCount: !_viewModel.isSearch
                                         ? _viewModel.customerUIs.length
                                         : _viewModel.listSearchCustomer.length,
                                     itemBuilder: (ctx, index) {
-                                      final CustomerEntity customer = !_value
+                                      final Customer customer = !_viewModel.isSearch
                                           ? _viewModel.customerUIs[index]
                                           : _viewModel
                                               .listSearchCustomer[index];
@@ -145,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         padding: EdgeInsets.only(top: 150),
                                         child: Center(
                                           child: Text(
-                                            !_value
+                                            !_viewModel.isSearch
                                                 ? 'Chưa có khách hàng'
                                                 : 'Không tìm thấy khách hàng',
                                             style: TextStyle(fontSize: 17),
@@ -154,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ],
                                   );
-                          });
+                          
                         }),
                   ),
                 ],
@@ -169,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
           FloatingActionButton.extended(
             heroTag: 'btn1_2',
             onPressed: () {
-              Get.toNamed(MyRouter.ghiNo);
+            
             },
             icon: Icon(CupertinoIcons.money_dollar),
             label: Text('Danh sách nợ'),
@@ -200,7 +197,7 @@ class CustomerItem extends StatelessWidget {
     required this.index,
   }) : super(key: key);
 
-  final CustomerEntity customer;
+  final Customer customer;
 
   final int index;
 

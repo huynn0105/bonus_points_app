@@ -1,10 +1,10 @@
 import 'package:uuid/uuid.dart';
 
-class BaseEntity  {
+class BaseModel  {
   String? id;
   DateTime? createTime;
 
-  BaseEntity({this.id, this.createTime}) {
+  BaseModel({this.id, this.createTime}) {
     if (id == null) {
       id = Uuid().v4();
     }
