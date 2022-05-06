@@ -4,7 +4,6 @@ import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detai
 import 'package:bonus_points_app/ui/screen/customer_screen/customer_screen.dart';
 import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/screen/sign_in_screen/sign_in_screen.dart';
-import 'package:bonus_points_app/ui/screen/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyRouter {
@@ -25,11 +24,6 @@ class MyRouter {
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case splash:
-        return _buildRouteNavigation(
-          settings,
-          SplashScreen(),
-        );
       case signin:
         return _buildRouteNavigation(
           settings,
@@ -59,6 +53,15 @@ class MyRouter {
           settings,
           CustomerDetailScreen(
             customer: settings.arguments as Customer,
+          ),
+        );
+      default:
+        return _buildRouteNavigation(
+          settings,
+          Scaffold(
+            body: Center(
+              child: Text('No route found: ${settings.name}.'),
+            ),
           ),
         );
     }

@@ -295,7 +295,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                   ],
                   rows: !_viewModel.isSearch
                       ? _viewModel.customerUIs.map((e) => e.values).toList()
-                      : _viewModel.listSearchCustomer
+                      : _viewModel.customersToDisplay
                           .map((e) => e.values)
                           .toList(),
                   onTapRow: (rows, index) {

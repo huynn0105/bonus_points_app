@@ -9,30 +9,59 @@ const point_detail_sua_lon = 'point_detail_sua_lon';
 const point_detail_ghi_no = 'point_detail_ghi_no';
 
 class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
-  String checkPointType(PointType pointType) {
-    switch (pointType) {
-      case PointType.thuong:
-        return point_detail_thuong;
-
-      case PointType.lon:
-        return point_detail_sua_lon;
-
-      case PointType.no:
-        return point_detail_ghi_no;
-    }
-  }
-
   CollectionReference customers =
       FirebaseFirestore.instance.collection('customers');
 
   List<Customer> _listSearchCustomer = [];
-
-  List<Customer> get listSearchCustomer => _listSearchCustomer;
-
+  List<Customer> _customersList = [];
+  List<PointDetail> _pointDetailThuong = [];
   List<Customer> _allCustomers = [];
+  List<PointDetail> _pointDetailSuaLon = [];
+  List<PointDetail> _pointDetailGhiNo = [];
+  List<PointDetail> _customerPointDetails = [];
+
+  bool _isSearch = false;
+  Customer? _currentCustomer;
+
+  @override
+  Customer? get currentCustomer => _currentCustomer;
+
+  @override
+  set currentCustomer(Customer? customer) {
+    _currentCustomer = customer;
+    notifyListeners();
+  }
+
+  @override
+  List<PointDetail> get customerPointDetailsGhiNo => _pointDetailGhiNo;
+
+  @override
+  List<PointDetail> get customerPointDetailsSuaLon => _pointDetailSuaLon;
+
+  @override
+  bool get isSearch => _isSearch;
+
+  @override
+  set isSearch(bool value) {
+    _isSearch = value;
+    notifyListeners();
+  }
+
+  @override
+  List<Customer> get customerUIs => _customersList;
+
+  @override
+  List<PointDetail> get customerPointDetailsThuong => _pointDetailThuong;
+
+  @override
+  List<PointDetail> get customerPointDetails => _customerPointDetails;
+
+  @override
+  List<Customer> get customersToDisplay => _listSearchCustomer;
+
 
   Future<void> syncData() async {
-    var data = await customers.limit(50).get();
+    var data = await customers.limit(30).get();
 
     _customersList = data.docs
         .map((e) => Customer.fromJson(e.data() as Map<String, dynamic>))
@@ -41,10 +70,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     _customersList.sort((e1, e2) => e1.createTime!.compareTo(e2.createTime!));
 
     notifyListeners();
-    getAllCustomers();
+    _getAllCustomers();
   }
 
-  Future<void> getAllCustomers() async {
+  Future<void> _getAllCustomers() async {
     var allData = await customers.get();
     _allCustomers = allData.docs
         .map((e) => Customer.fromJson(e.data() as Map<String, dynamic>))
@@ -62,21 +91,35 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     isSearch = true;
   }
 
-  Future<void> putCustomerFirebase(Customer entity) async {
+    String _checkPointType(PointType pointType) {
+    switch (pointType) {
+      case PointType.thuong:
+        return point_detail_thuong;
+
+      case PointType.lon:
+        return point_detail_sua_lon;
+
+      case PointType.no:
+        return point_detail_ghi_no;
+    }
+  }
+
+
+  Future<void> _putCustomerFirebase(Customer entity) async {
     await customers.doc(entity.id!).set(entity.toJson());
   }
 
-  Future<void> updateCustomerFirebase(Customer entity) async {
+  Future<void> _updateCustomerFirebase(Customer entity) async {
     await customers.doc(entity.id!).update(entity.toJson());
   }
 
-  Future<void> deleteCustomerFirebase(String id) async {
+  Future<void> _deleteCustomerFirebase(String id) async {
     await customers.doc(id).delete();
   }
 
-  Future<void> putPointDetailFirebase(
+  Future<void> _putPointDetailFirebase(
       PointDetail entity, PointType pointType) async {
-    final path = checkPointType(pointType);
+    final path = _checkPointType(pointType);
     await customers
         .doc(entity.customerId)
         .collection(path)
@@ -84,9 +127,9 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         .set(entity.toJson());
   }
 
-  Future<void> deletePointDetailFirebase(
+  Future<void> _deletePointDetailFirebase(
       PointDetail entity, PointType pointType) async {
-    final path = checkPointType(pointType);
+    final path = _checkPointType(pointType);
     await customers
         .doc(entity.customerId)
         .collection(path)
@@ -94,7 +137,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         .delete();
   }
 
-  List<Customer> _customersList = [];
   @override
   Future<void> addCustomer(
       Customer model, int point, PointType pointType) async {
@@ -104,12 +146,12 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       comment: 'Thêm khách hàng',
       type: 1,
     );
-    await putCustomerFirebase(model);
+    await _putCustomerFirebase(model);
     _customersList.insert(0, model);
     _allCustomers.insert(0, model);
     _listSearchCustomer.insert(0, model);
 
-    await putPointDetailFirebase(pointDetail, pointType);
+    await _putPointDetailFirebase(pointDetail, pointType);
     switch (pointType) {
       case PointType.thuong:
         _pointDetailThuong.add(pointDetail);
@@ -128,7 +170,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> updateCustomer(Customer model) async {
-    await updateCustomerFirebase(model);
+    await _updateCustomerFirebase(model);
     _customersList.removeWhere((x) => x.id == model.id);
     _customersList.insert(0, model);
     _allCustomers.removeWhere((x) => x.id == model.id);
@@ -140,13 +182,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
     notifyListeners();
   }
-
-  @override
-  List<Customer> get customerUIs => _customersList;
-
-  @override
-  List<PointDetail> get customerPointDetailsThuong => _pointDetailThuong;
-  List<PointDetail> _pointDetailThuong = [];
 
   Future<void> getCustomerPointDetails(String customerId) async {
     var dataPointDetailThuongFb =
@@ -197,7 +232,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       type: type,
     );
 
-    await putPointDetailFirebase(pointEntity, pointType);
+    await _putPointDetailFirebase(pointEntity, pointType);
 
     switch (pointType) {
       case PointType.thuong:
@@ -215,7 +250,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         customer.tienNo += type == 1 ? point : -point;
         break;
     }
-    await updateCustomerFirebase(customer);
+    await _updateCustomerFirebase(customer);
     _allCustomers.removeWhere((x) => x.id == customer.id!);
     _allCustomers.insert(0, customer);
     _listSearchCustomer.removeWhere((x) => x.id == customer.id!);
@@ -225,9 +260,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  Future<void> deletePoint(
-      PointDetail entity, PointType pointType) async {
-    await deletePointDetailFirebase(entity, pointType);
+  Future<void> deletePoint(PointDetail entity, PointType pointType) async {
+    await _deletePointDetailFirebase(entity, pointType);
 
     var customer = _allCustomers.firstWhere((x) => x.id! == entity.customerId);
 
@@ -249,18 +283,18 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         customer.tienNo += entity.type == 1 ? -entity.point : -entity.point;
         break;
     }
-    await updateCustomerFirebase(customer);
+    await _updateCustomerFirebase(customer);
     _customersList.removeWhere((x) => x.id == entity.customerId);
-    _customersList.insert(0,customer);
+    _customersList.insert(0, customer);
     _listSearchCustomer.removeWhere((x) => x.id == entity.customerId);
-    _listSearchCustomer.insert(0,customer);
+    _listSearchCustomer.insert(0, customer);
 
     notifyListeners();
   }
 
   @override
   Future<void> deleteCustomer(Customer model) async {
-    await deleteCustomerFirebase(model.id!);
+    await _deleteCustomerFirebase(model.id!);
 
     _customersList.removeWhere((e) => e.id == model.id);
     _allCustomers.removeWhere((e) => e.id == model.id);
@@ -268,40 +302,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
     notifyListeners();
   }
-
-  @override
-  Customer? get currentCustomer => _currentCustomer;
-
-  Customer? _currentCustomer;
-
-  set currentCustomer(Customer? customer) {
-    _currentCustomer = customer;
-    notifyListeners();
-  }
-
-  List<PointDetail> _pointDetailSuaLon = [];
-
-  List<PointDetail> _pointDetailGhiNo = [];
-
-  @override
-  List<PointDetail> get customerPointDetailsGhiNo => _pointDetailGhiNo;
-
-  @override
-  List<PointDetail> get customerPointDetailsSuaLon => _pointDetailSuaLon;
-
-  bool _isSearch = false;
-
-  bool get isSearch => _isSearch;
-
-  set isSearch(bool value) {
-    _isSearch = value;
-    notifyListeners();
-  }
-
-  List<PointDetail> _customerPointDetails = [];
-  @override
-  List<PointDetail> get customerPointDetails => _customerPointDetails;
-
 }
 
 enum PointType {

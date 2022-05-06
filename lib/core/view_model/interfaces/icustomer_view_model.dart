@@ -7,17 +7,17 @@ abstract class ICustomerViewModel with ChangeNotifier {
   Future<void> addCustomer(Customer model,int point,PointType pointType);
   Customer? currentCustomer;
   Future<void> updateCustomer(Customer model);
-
   Future<void> deletePoint(PointDetail entity,PointType pointType);
   Future<void> deleteCustomer(Customer model);
   Future<void> syncData();
   Future<void> getCustomerPointDetails(String customerId);
+
   List<Customer> get customerUIs;
   List<PointDetail> get customerPointDetailsThuong;
   List<PointDetail> get customerPointDetailsSuaLon;
   List<PointDetail> get customerPointDetailsGhiNo;
   List<PointDetail> get customerPointDetails;
-  List<Customer> get listSearchCustomer;
+  List<Customer> get customersToDisplay;
 
   void searchCustomer(String searchText);
   Future<void> addPoint(

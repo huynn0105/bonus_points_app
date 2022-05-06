@@ -126,12 +126,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ? ListView.builder(
                                     itemCount: !_viewModel.isSearch
                                         ? _viewModel.customerUIs.length
-                                        : _viewModel.listSearchCustomer.length,
+                                        : _viewModel.customersToDisplay.length,
                                     itemBuilder: (ctx, index) {
                                       final Customer customer = !_viewModel.isSearch
                                           ? _viewModel.customerUIs[index]
                                           : _viewModel
-                                              .listSearchCustomer[index];
+                                              .customersToDisplay[index];
                                       return CustomerItem(
                                           customer: customer, index: index);
                                     },

@@ -1,6 +1,5 @@
 import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
-import 'package:bonus_points_app/core/view_model/implements/customer_view_model.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
