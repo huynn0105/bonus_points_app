@@ -1,6 +1,10 @@
 import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
+import 'package:bonus_points_app/global/enum.dart';
 import 'package:bonus_points_app/global/router.dart';
+import 'package:bonus_points_app/ui/screen/add_customer_screen/add_customer_screen.dart';
+import 'package:bonus_points_app/ui/screen/add_point_screen/add_point_screen.dart';
+import 'package:bonus_points_app/ui/screen/delete_customer_screen/delete_customer_screen.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +13,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,19 +23,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late ICustomerViewModel viewModel;
+  late ICustomerViewModel _viewModel;
   late SimpleFontelicoProgressDialog _dialog;
-  late TextEditingController controller;
-
+  late TextEditingController searchController;
+  DateTime? _startDate;
+  DateTime? _endDate;
   @override
   void initState() {
-    viewModel = context.read<ICustomerViewModel>();
-    controller = TextEditingController();
+    _startDate = null;
+    _endDate = null;
+    _viewModel = context.read<ICustomerViewModel>();
+    searchController = TextEditingController();
     _dialog = SimpleFontelicoProgressDialog(
         context: context, barrierDimisable: false);
     Future.delayed(Duration.zero, () async {
       _dialog.show(message: 'Đợi một lát...');
-      await viewModel.syncData();
+      await _viewModel.syncData();
       _dialog.hide();
     });
     super.initState();
@@ -42,15 +51,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting('vi');
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        toolbarHeight: 68,
+        backgroundColor: const Color(0xFFf5f6fa),
         title: Text('Danh sách khách hàng'),
         centerTitle: true,
-        elevation: 0,
+        leading: SizedBox.shrink(),
+        elevation: 5,
         titleTextStyle: TextStyle(
-          fontSize: 24,
-          color: Colors.white,
+          fontSize: 25,
+          color: Colors.black,
         ),
       ),
       backgroundColor: Color(0xFFF5F6F7),
@@ -64,128 +76,271 @@ class _HomeScreenState extends State<HomeScreen> {
             elevation: 8,
             child: Padding(
               padding: EdgeInsets.all(30),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                          textInputAction: TextInputAction.search,
-                          controller: controller,
-                          decoration: InputDecoration(
-                            suffixIcon: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    controller.clear();
-                                    context
-                                        .read<ICustomerViewModel>()
-                                        .isSearch = false;
-                                  },
-                                  icon: Icon(Icons.clear, color: Colors.black),
-                                ),
-                                SizedBox(width: 10),
-                                IconButton(
-                                  onPressed: () {
-                                    context
-                                        .read<ICustomerViewModel>()
-                                        .searchCustomer(controller.text);
-                                  },
-                                  icon: Icon(Icons.search, color: Colors.black),
-                                ),
-                              ],
-                            ),
-                            hintText: "Tìm kiếm khách hàng...",
-                            hintStyle: TextStyle(
+              child: Consumer<ICustomerViewModel>(builder: (_, _viewModel, __) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(width: 30),
+                        Expanded(
+                          child: TextField(
+                            style: TextStyle(
                               color: Colors.black,
+                            ),
+                            textInputAction: TextInputAction.search,
+                            controller: searchController,
+                            onSubmitted: (value) {
+                              if (value.isNotEmpty) {
+                                _viewModel.searchCustomer(value);
+                              }
+                            },
+                            decoration: InputDecoration(
+                              suffixIcon: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      searchController.text = '';
+                                      _viewModel.searched = false;
+                                      _viewModel.searchCustomer('');
+                                    },
+                                    icon:
+                                        Icon(Icons.clear, color: Colors.black),
+                                  ),
+                                  SizedBox(width: 10),
+                                  IconButton(
+                                    onPressed: () {
+                                      if (searchController.text.isNotEmpty) {
+                                        _viewModel.searchCustomer(
+                                            searchController.text);
+                                      }
+                                    },
+                                    icon:
+                                        Icon(Icons.search, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                              hintText: "Tìm kiếm khách hàng...",
+                              hintStyle: TextStyle(
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      FloatingActionButton.extended(
-                        heroTag: 'btn2',
-                        onPressed: () {
-                          Get.toNamed(MyRouter.addCustomer);
-                        },
-                        icon: Icon(Icons.add),
-                        backgroundColor: Colors.green,
-                        label: Text('Thêm khách hàng'),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 30),
-                  Expanded(
-                    child: Consumer<ICustomerViewModel>(
-                              builder: (_, _viewModel, __) {
-                            return _viewModel.customerUIs.isNotEmpty
-                                ? ListView.builder(
-                                    itemCount: !_viewModel.isSearch
-                                        ? _viewModel.customerUIs.length
-                                        : _viewModel.customersToDisplay.length,
-                                    itemBuilder: (ctx, index) {
-                                      final Customer customer = !_viewModel.isSearch
-                                          ? _viewModel.customerUIs[index]
-                                          : _viewModel
-                                              .customersToDisplay[index];
-                                      return CustomerItem(
-                                          customer: customer, index: index);
-                                    },
-                                  )
-                                : ListView(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 150),
-                                        child: Center(
-                                          child: Text(
-                                            !_viewModel.isSearch
-                                                ? 'Chưa có khách hàng'
-                                                : 'Không tìm thấy khách hàng',
-                                            style: TextStyle(fontSize: 17),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                          
-                        }),
-                  ),
-                ],
-              ),
+                        SizedBox(width: 50),
+                        MyButton(
+                          width: 160,
+                          onPressed: () {
+                            showDateRange(context, (args) {
+                              if (args != null) {
+                                if (args is PickerDateRange) {
+                                  _startDate = args.startDate;
+                                  if (args.endDate != null) {
+                                    _endDate = DateTime(
+                                        args.endDate!.year,
+                                        args.endDate!.month,
+                                        args.endDate!.day,
+                                        23,
+                                        59,
+                                        59);
+                                  } else {
+                                    _endDate = DateTime(
+                                        args.startDate!.year,
+                                        args.startDate!.month,
+                                        args.startDate!.day,
+                                        23,
+                                        59,
+                                        59);
+                                  }
+                                  _viewModel.filterByDateRange(
+                                      _startDate!, _endDate!);
+                                }
+                              }
+                              Get.back();
+                            });
+                          },
+                          color: Colors.blue.shade200,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.filter_list_alt,
+                                color: Colors.black,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                'Lọc ngày',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                          borderRadius: 20,
+                        ),
+                        SizedBox(width: 10),
+                        MyButton(
+                          width: 160,
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: AddCustomerScreen(),
+                              ),
+                            );
+                          },
+                          color: const Color(0xFFeadc03),
+                          child: Text(
+                            'Thêm khách hàng',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          borderRadius: 20,
+                        ),
+                      ],
+                    ),
+                    _startDate != null
+                        ? Padding(
+                            padding: const EdgeInsets.only(right: 160),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                DateFormat('dd MMM yyyy', 'vi').format(
+                                      _startDate!,
+                                    ) +
+                                    (DateFormat(' - dd MMM yyyy', 'vi').format(
+                                      _endDate!,
+                                    )),
+                              ),
+                            ))
+                        : const SizedBox.shrink(),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: _viewModel.customerUIs.isNotEmpty
+                          ? ListView.builder(
+                              itemCount: !_viewModel.searched
+                                  ? _viewModel.customerUIs.length
+                                  : _viewModel.customersToDisplay.length,
+                              itemBuilder: (ctx, index) {
+                                final Customer customer = !_viewModel.searched
+                                    ? _viewModel.customerUIs[index]
+                                    : _viewModel.customersToDisplay[index];
+                                return CustomerItem(
+                                  customer: customer,
+                                  index: index,
+                                );
+                              },
+                            )
+                          : ListView(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 150),
+                                  child: Center(
+                                    child: Text(
+                                      !_viewModel.searched
+                                          ? 'Chưa có khách hàng'
+                                          : 'Không tìm thấy khách hàng',
+                                      style: TextStyle(fontSize: 17),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ),
       ),
-      floatingActionButton: Column(
+      floatingActionButton: Selector<ICustomerViewModel, FilterType>(
+          selector: (_, _vm) => _vm.filterType,
+          builder: (context, __, ___) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                MyFunction(
+                    title: 'Vừa cập nhập',
+                    color: Colors.green.shade300,
+                    active: _viewModel.filterType == FilterType.crateTime,
+                    onPreesed: () {
+                      _viewModel.filterBy(FilterType.crateTime);
+                      _reset();
+                    }),
+                SizedBox(height: 16),
+                MyFunction(
+                  title: 'Top điểm thường',
+                  color: Colors.orange,
+                  active: _viewModel.filterType == FilterType.point,
+                  onPreesed: () {
+                    _viewModel.filterBy(FilterType.point);
+                    _reset();
+                  },
+                ),
+                SizedBox(height: 16),
+                MyFunction(
+                  title: 'Top điểm lon',
+                  active: _viewModel.filterType == FilterType.point1,
+                  color: Colors.blue.shade600,
+                  onPreesed: () {
+                    _viewModel.filterBy(FilterType.point1);
+                    _reset();
+                  },
+                ),
+                SizedBox(height: 16),
+                MyFunction(
+                  title: 'Top nợ',
+                  active: _viewModel.filterType == FilterType.owe,
+                  color: Colors.red.shade600,
+                  onPreesed: () {
+                    _viewModel.filterBy(FilterType.owe);
+                    _reset();
+                  },
+                ),
+              ],
+            );
+          }),
+    );
+  }
+
+  void _reset() {
+    _startDate = null;
+    _endDate = null;
+    searchController.text = '';
+  }
+}
+
+class MyFunction extends StatelessWidget {
+  const MyFunction({
+    Key? key,
+    this.active = false,
+    required this.color,
+    required this.title,
+    required this.onPreesed,
+  }) : super(key: key);
+  final String title;
+  final Color color;
+  final bool active;
+  final VoidCallback onPreesed;
+
+  @override
+  Widget build(BuildContext context) {
+    return MyButton(
+      width: 230,
+      onPressed: onPreesed,
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          FloatingActionButton.extended(
-            heroTag: 'btn1_2',
-            onPressed: () {
-            
-            },
-            icon: Icon(CupertinoIcons.money_dollar),
-            label: Text('Danh sách nợ'),
-            backgroundColor: Colors.green,
-          ),
-          SizedBox(height: 20),
-          FloatingActionButton.extended(
-            heroTag: 'btn1',
-            onPressed: () async {
-              _dialog.show(message: 'Chờ một lát...');
-              await viewModel.syncData();
-              _dialog.hide();
-            },
-            icon: Icon(Icons.refresh),
-            label: Text('Làm mới danh sách'),
-            backgroundColor: Colors.deepOrange,
-          ),
+          if (active)
+            SizedBox(
+              width: 60,
+              child: Icon(
+                Icons.check,
+                color: Colors.white,
+              ),
+            ),
+          Text(title),
         ],
       ),
+      color: color,
     );
   }
 }
@@ -216,10 +371,7 @@ class CustomerItem extends StatelessWidget {
       child: InkWell(
         onTap: () {
           _viewModel.currentCustomer = customer;
-          Get.toNamed(
-            MyRouter.detail,
-            arguments: customer,
-          );
+          Get.toNamed(MyRouter.detail, arguments: customer);
         },
         child: ListTile(
           leading: Text(
@@ -240,16 +392,16 @@ class CustomerItem extends StatelessWidget {
                     Text(
                       customer.name,
                       style: TextStyle(
-                        fontSize: 19,
+                        fontSize: 20,
                         fontWeight: FontWeight.w500,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      'Sđt: ${customer.phoneNumber!}',
+                      'SĐT: ${customer.phoneNumber!}',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w400,
                       ),
                     ),
@@ -264,34 +416,79 @@ class CustomerItem extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 250,
+                width: 300,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Điểm thường: ${format.format(customer.totalPointThuong)}',
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 125,
+                          child: Text(
+                            'Điểm thường:',
+                            style: TextStyle(
+                              color: Colors.orange,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${format.format(customer.point)}',
+                          style: TextStyle(
+                            color: Colors.orange,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Điểm sữa lon: ${format.format(customer.totalPointSuaLon)}',
-                      style: TextStyle(
-                        color: Colors.blue[600],
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 125,
+                          child: Text(
+                            'Điểm sữa lon:',
+                            style: TextStyle(
+                              color: Colors.blue[600],
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${format.format(customer.point1)}',
+                          style: TextStyle(
+                            color: Colors.blue[600],
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      'Nợ: ${format.format(customer.tienNo)} VNĐ',
-                      style: TextStyle(
-                        color: Colors.red[600],
-                        fontSize: 17,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 125,
+                          child: Text(
+                            'Nợ:',
+                            style: TextStyle(
+                              color: Colors.red[600],
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${format.format(customer.owe)} VNĐ',
+                          style: TextStyle(
+                            color: Colors.red[600],
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -299,51 +496,80 @@ class CustomerItem extends StatelessWidget {
               SizedBox(width: 10),
               IconButton(
                 onPressed: () {
-                  Get.defaultDialog(
-                    title: 'Xác nhận xoá',
-                    middleText: 'Bạn muốn xoá khách hàng này?',
-                    titleStyle: TextStyle(fontSize: 22),
-                    middleTextStyle: TextStyle(fontSize: 20),
-                    contentPadding: EdgeInsets.all(16),
-                    actions: [
-                      MyButton(
-                          width: 40,
-                          child: Text(
-                            'Huỷ bỏ',
-                            style: TextStyle(color: Colors.black, fontSize: 18),
-                          ),
-                          color: Colors.grey,
-                          onPressed: () {
-                            Get.back();
-                          }),
-                      SizedBox(
-                        width: 20,
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: AddPoint(
+                        customer: customer,
                       ),
-                      MyButton(
-                          width: 40,
-                          child: Text(
-                            'Xoá',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          color: Color(0xFFEA2027),
-                          onPressed: () async {
-                            _dialog.show(message: 'Chờ một lát...');
-                            await _viewModel.deleteCustomer(customer);
-                            _dialog.hide();
-                            Get.back();
-                          }),
-                    ],
+                    ),
+                  );
+                },
+                icon: const Icon(
+                  Icons.add_circle_outline,
+                  color: Color(0xff00b90a),
+                ),
+              ),
+              const SizedBox(width: 10),
+              IconButton(
+                onPressed: () {
+                  _viewModel.currentCustomer = customer;
+                  Get.toNamed(
+                    MyRouter.detail,
+                    arguments: customer,
+                  );
+                },
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  color: Color(0xffEFCD11),
+                ),
+              ),
+              const SizedBox(width: 10),
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: DeleteCustomer(customer: customer),
+                    ),
                   );
                 },
                 icon: Icon(
                   CupertinoIcons.delete_solid,
                   color: Colors.red,
                 ),
-              )
+              ),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+Future<dynamic> showDateRange(
+    BuildContext context, final Function(Object?)? onSubmit) {
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      contentPadding: EdgeInsets.all(16.r),
+      content: SizedBox(
+        height: 350.0,
+        width: 350.0,
+        child: SfDateRangePicker(
+          confirmText: 'Xác nhận',
+          onCancel: () {
+            Get.back();
+          },
+          onSubmit: onSubmit,
+          cancelText: 'Huỷ bỏ',
+          view: DateRangePickerView.month,
+          showActionButtons: true,
+          initialDisplayDate: DateTime.now(),
+          initialSelectedDate: DateTime.now(),
+          selectionMode: DateRangePickerSelectionMode.range,
+        ),
+      ),
+    ),
+  );
 }

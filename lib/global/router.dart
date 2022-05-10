@@ -1,7 +1,8 @@
 import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/ui/screen/add_customer_screen/add_customer_screen.dart';
 import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detail_screen.dart';
-import 'package:bonus_points_app/ui/screen/customer_screen/customer_screen.dart';
+import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detail_screen_1.dart';
+import 'package:bonus_points_app/ui/screen/home_screen/home_screen1.dart';
 import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/screen/sign_in_screen/sign_in_screen.dart';
 import 'package:flutter/material.dart';
@@ -37,21 +38,12 @@ class MyRouter {
       case customers:
         return _buildRouteNavigation(
           settings,
-          CustomersScreen(),
-        );
-      case addCustomer:
-        return _buildRouteNavigation(
-          settings,
-          AddCustomerScreen(
-            customer: settings.arguments != null
-                ? settings.arguments as Customer
-                : null,
-          ),
+          HomeScreen1(),
         );
       case detail:
         return _buildRouteNavigation(
           settings,
-          CustomerDetailScreen(
+          CustomerDetailScreen1(
             customer: settings.arguments as Customer,
           ),
         );

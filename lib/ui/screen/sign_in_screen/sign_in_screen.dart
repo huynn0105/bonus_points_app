@@ -42,12 +42,12 @@ class _SignInScreenState extends State<SignInScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MyTextFormField(
-                    lable: Text('Tên đăng nhập'),
+                    lable: 'Tên đăng nhập',
                     controller: usernameController,
                   ),
                   SizedBox(height: 30),
                   MyTextFormField(
-                    lable: Text('Mật khẩu'),
+                    lable: 'Mật khẩu',
                     controller: passwordController,
                     obscureText: true,
                   ),

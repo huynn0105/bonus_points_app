@@ -1,10 +1,16 @@
 import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
+import 'package:bonus_points_app/ui/screen/add_point_screen/add_point_screen.dart';
+import 'package:bonus_points_app/ui/screen/delete_customer_screen/delete_customer_screen.dart';
+import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
+import 'package:bonus_points_app/ui/widgets/my_text_form_field.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +33,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
       addressController,
       point1Controller,
       oweController;
-  late MaskedTextController phoneController;
+  late TextEditingController phoneController;
   late TextEditingController commentController;
   late ICustomerViewModel _viewModel;
   late SimpleFontelicoProgressDialog _dialog;
@@ -37,13 +43,10 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     super.initState();
     Customer customer = widget.customer;
     usernameController = TextEditingController(text: customer.name);
-    point1Controller =
-        TextEditingController(text: customer.totalPointSuaLon.toString());
-    oweController = TextEditingController(text: customer.tienNo.toString());
-    phoneController =
-        MaskedTextController(mask: '000,000,0000', text: customer.phoneNumber);
-    pointController =
-        TextEditingController(text: customer.totalPointThuong.toString());
+    point1Controller = TextEditingController(text: customer.point1.toString());
+    oweController = TextEditingController(text: customer.owe.toString());
+    phoneController = TextEditingController(text: customer.phoneNumber);
+    pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
     commentController = TextEditingController();
     _viewModel = context.read<ICustomerViewModel>();
@@ -65,7 +68,9 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
           icon: const BackButtonIcon(),
           color: Colors.black,
           iconSize: 35,
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+          },
         ),
         toolbarHeight: 68,
         backgroundColor: const Color(0xFFf5f6fa),
@@ -80,7 +85,26 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
         elevation: 5,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: AddPoint(
+                    customer: widget.customer,
+                    onAddPoint: (point, point1, owe) {
+               
+                      pointController.text =
+                          (int.parse(pointController.text) + point).toString();
+                      point1Controller.text =
+                          (int.parse(point1Controller.text) + point1)
+                              .toString();
+                      oweController.text =
+                          (int.parse(oweController.text) + owe).toString();
+                    },
+                  ),
+                ),
+              );
+            },
             icon: const Icon(
               CupertinoIcons.add,
               color: Colors.green,
@@ -90,276 +114,274 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
           const SizedBox(width: 20),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+      body: SingleChildScrollView(
+        child: Center(
+          child: SizedBox(
+            width: 1.sw - 0.3.sw,
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 15),
+                    Text(
+                      'Thông tin khách hàng ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
-                      labelText: 'Họ và tên',
-                      labelStyle: headerStyle,
                     ),
-                    controller: usernameController,
-                    style: bodyStyle,
-                  ),
-                ),
-                const SizedBox(width: 25),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                    SizedBox(height: 10),
+                    MyTextFormField(
+                      width: 1.sw,
+                      lable: 'Họ và tên',
+                      controller: usernameController,
+                    ),
+                    SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: MyTextFormField(
+                            width: 1.sw,
+                            lable: 'Số điện thoại',
+                            controller: phoneController,
+                            textInputType: TextInputType.number,
+                            validator: (value) {
+                              if (value!.trim().isEmpty) {
+                                return 'Không được bỏ trống';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 40),
+                        Expanded(
+                          child: MyTextFormField(
+                            width: 1.sw,
+                            lable: 'Địa chỉ',
+                            controller: addressController,
+                            textInputType: TextInputType.text,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Loại',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
-                      labelText: 'Địa chỉ',
-                      labelStyle: headerStyle,
                     ),
-                    controller: addressController,
-                    style: bodyStyle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: 'Số điện thoại',
-                      labelStyle: headerStyle,
+                    SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: MyTextFormField(
+                            width: 1.sw,
+                            lable: 'Điểm thường',
+                            readOnly: true,
+                            controller: pointController,
+                            textInputType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 40),
+                        Expanded(
+                          child: MyTextFormField(
+                            width: 1.sw,
+                            lable: 'Điểm lon',
+                            readOnly: true,
+                            controller: point1Controller,
+                            textInputType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 40),
+                        Expanded(
+                          child: MyTextFormField(
+                            width: 1.sw,
+                            lable: 'Tiền nợ',
+                            readOnly: true,
+                            controller: oweController,
+                            textInputType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    controller: phoneController,
-                    style: bodyStyle,
-                  ),
-                ),
-                const SizedBox(width: 25),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: 'Điểm',
-                      labelStyle: headerStyle,
-                    ),
-                    controller: pointController,
-                    style: bodyStyle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: 'Điểm lon',
-                      labelStyle: headerStyle,
-                    ),
-                    controller: point1Controller,
-                    style: bodyStyle,
-                  ),
-                ),
-                const SizedBox(width: 25),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: 'Nợ',
-                      labelStyle: headerStyle,
-                      suffix: const Text('VNĐ'),
-                    ),
-                    controller: oweController,
-                    style: bodyStyle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    elevation: MaterialStateProperty.all<double>(0),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFf44336)),
-                    minimumSize: MaterialStateProperty.all<Size>(
-                      const Size(140, 49),
-                    ),
-                  ),
-                  onPressed: () async {
-                    await Get.defaultDialog(
-                      title: 'Xác nhận xoá',
-                      middleText: 'Bạn muốn xoá khách hàng này?',
-                      titleStyle: TextStyle(fontSize: 22),
-                      middleTextStyle: TextStyle(fontSize: 20),
-                      contentPadding: EdgeInsets.all(16),
-                      actions: [
-                        MyButton(
-                            width: 40,
-                            child: Text(
-                              'Huỷ bỏ',
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 18),
+                    const SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            elevation: MaterialStateProperty.all<double>(0),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color(0xFFf44336)),
+                            minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(140, 49),
                             ),
-                            color: Colors.grey,
-                            onPressed: () {
-                              Get.back();
-                            }),
-                        SizedBox(
-                          width: 20,
+                          ),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                content: DeleteCustomer(
+                                  customer: widget.customer,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Xoá',
+                            style: bodyStyle,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            elevation: MaterialStateProperty.all<double>(0),
+                            foregroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                const Color(0xFF00b90a)),
+                            minimumSize: MaterialStateProperty.all<Size>(
+                              const Size(140, 49),
+                            ),
+                          ),
+                          onPressed: () async {
+                            await _viewModel
+                                .updateCustomer(widget.customer.copyWith(
+                              address: addressController.text,
+                              phoneNumber: phoneController.text,
+                              name: usernameController.text,
+                              createTime: DateTime.now(),
+                            ));
+                            Get.back();
+                          },
+                          child: Text(
+                            'Cập nhập',
+                            style: bodyStyle,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 60, vertical: 14),
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF182236),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(16),
+                                topRight: Radius.circular(16)),
+                          ),
+                          child: Text(
+                            'Lịch sử',
+                            style: headerStyle.copyWith(color: Colors.white),
+                          ),
                         ),
                         MyButton(
-                            width: 40,
                             child: Text(
-                              'Xoá',
-                              style: TextStyle(fontSize: 18),
+                              'Thêm điểm',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
                             ),
-                            color: Color(0xFFEA2027),
-                            onPressed: () async {
-                              _dialog.show(message: 'Chờ một lát...');
-                              await _viewModel.deleteCustomer(widget.customer);
-                              _dialog.hide();
-                              Get.back();
-                            }),
+                            color: const Color(0xFF0EFCD11),
+                            borderRadius: 25,
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  content: AddPoint(
+                                    customer: widget.customer,
+                                    onAddPoint: (point,point1,owe){
+                                               pointController.text =
+                          (int.parse(pointController.text) + point).toString();
+                      point1Controller.text =
+                          (int.parse(point1Controller.text) + point1)
+                              .toString();
+                      oweController.text =
+                          (int.parse(oweController.text) + owe).toString();
+                                    },
+                                  ),
+                                ),
+                              );
+                            })
                       ],
-                    );
-                  },
-                  child: Text(
-                    'Xoá',
-                    style: bodyStyle,
-                  ),
+                    ),
+                    Container(
+                      color: Colors.brown.shade100,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(18),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Thời gian',
+                              style: bodyStyle,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Nội dung',
+                              style: bodyStyle,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Loại',
+                              style: bodyStyle,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Điểm/ Nợ',
+                              style: bodyStyle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Consumer<ICustomerViewModel>(builder: (_, _vm, __) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => _TransactionItem(
+                          detail: _vm.customerPointDetails[index],
+                          color: index % 2 == 0
+                              ? Colors.grey.shade100
+                              : Colors.grey.shade300,
+                        ),
+                        itemCount: _vm.customerPointDetails.length,
+                      );
+                    })
+                  ],
                 ),
-                const SizedBox(width: 14),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    elevation: MaterialStateProperty.all<double>(0),
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFF00b90a)),
-                    minimumSize: MaterialStateProperty.all<Size>(
-                      const Size(140, 49),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    'Cập nhập',
-                    style: bodyStyle,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 30),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 14),
-              decoration: const BoxDecoration(
-                color: Color(0xFF182236),
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16)),
-              ),
-              child: Text(
-                'Lịch sử',
-                style: headerStyle.copyWith(color: Colors.white),
               ),
             ),
-            Container(
-              color: Colors.brown.shade100,
-              width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Thời gian',
-                      style: bodyStyle,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Nội dung',
-                      style: bodyStyle,
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      'Loại',
-                      style: bodyStyle,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-            //ListView.builder(itemBuilder: (context,index)=>_TransactionItem(widget.customer.),)
-          ],
+          ),
         ),
-      ),
-    );
-  }
-}
-
-class _TransactionItem extends StatelessWidget {
-  const _TransactionItem({
-    Key? key,
-     required this.detail,
-  }) : super(key: key);
-  final PointDetail detail;
-  @override
-  Widget build(BuildContext context) {
-        final format = NumberFormat('#,###');
-
-    return Container(
-      color: Colors.green.shade100,
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-                         DateFormat('dd/MM/yyyy HH:mm').format(
-                  detail.createTime!,
-                ),
-              style: bodyStyle,
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              detail.comment,
-              style: bodyStyle,
-            ),
-          ),
-          Expanded(
-            child: Text(
-               detail.type != 1
-                        ? '${format.format(detail.point)}vnđ'
-                        : '${format.format(detail.point)}đ',
-              style: bodyStyle,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -374,3 +396,71 @@ TextStyle headerStyle = const TextStyle(
   fontSize: 21,
   fontWeight: FontWeight.w400,
 );
+
+class _TransactionItem extends StatelessWidget {
+  const _TransactionItem({
+    Key? key,
+    required this.detail,
+    required this.color,
+  }) : super(key: key);
+  final PointDetail detail;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final format = NumberFormat('#,###');
+
+    String getType() {
+      switch (detail.type) {
+        case 0:
+          return 'Điểm';
+        case 1:
+          return 'Điểm lon';
+        case 2:
+          return 'Nợ';
+        default:
+          return '';
+      }
+    }
+
+    return Container(
+      color: color,
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      margin: EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              DateFormat('dd/MM/yyyy HH:mm').format(
+                detail.createTime!,
+              ),
+              style: bodyStyle,
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Text(
+              detail.comment,
+              style: bodyStyle,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              getType(),
+              style: bodyStyle,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              detail.type == 2
+                  ? '${format.format(detail.value)}vnđ'
+                  : '${format.format(detail.value)} điểm',
+              style: bodyStyle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

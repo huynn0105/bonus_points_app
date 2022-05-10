@@ -9,14 +9,14 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 
-class CustomersScreen extends StatefulWidget {
-  const CustomersScreen({Key? key}) : super(key: key);
+class HomeScreen1 extends StatefulWidget {
+  const HomeScreen1({Key? key}) : super(key: key);
 
   @override
-  State<CustomersScreen> createState() => _CustomersScreenState();
+  State<HomeScreen1> createState() => _HomeScreen1State();
 }
 
-class _CustomersScreenState extends State<CustomersScreen> {
+class _HomeScreen1State extends State<HomeScreen1> {
   late String _sortColumnName;
   late bool _sortAscending;
   int _rowsPerPage = 10;
@@ -32,7 +32,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
         context: context, barrierDimisable: false);
     Future.delayed(Duration.zero, () async {
       _dialog.show(message: 'Đợi một lát...');
-      //await _viewModel.syncData();
+      await _viewModel.syncData();
       _dialog.hide();
     });
     _sortColumnName = 'browser';
@@ -108,7 +108,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                             IconButton(
                               onPressed: () {
                                 controller.clear();
-                                context.read<ICustomerViewModel>().isSearch =
+                                context.read<ICustomerViewModel>().searched =
                                     false;
                               },
                               icon: Icon(Icons.clear, color: Colors.black),
@@ -183,7 +183,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       )),
                     ),
                     WebDataColumn(
-                      name: 'totalPointThuong',
+                      name: 'point',
                       label: Text(
                         'Điểm',
                         style: headerStyle,
@@ -194,7 +194,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       )),
                     ),
                     WebDataColumn(
-                      name: 'totalPointSuaLon',
+                      name: 'point1',
                       label: Text(
                         'Điểm lon',
                         style: headerStyle,
@@ -205,7 +205,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       )),
                     ),
                     WebDataColumn(
-                      name: 'tienNo',
+                      name: 'owe',
                       label: Text(
                         'Nợ',
                         style: headerStyle,
@@ -293,7 +293,7 @@ class _CustomersScreenState extends State<CustomersScreen> {
                       ),
                     ),
                   ],
-                  rows: !_viewModel.isSearch
+                  rows: !_viewModel.searched
                       ? _viewModel.customerUIs.map((e) => e.values).toList()
                       : _viewModel.customersToDisplay
                           .map((e) => e.values)

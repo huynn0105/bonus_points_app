@@ -7,18 +7,18 @@ class Customer extends BaseModel {
   String name;
   String? phoneNumber;
   String? address;
-  int totalPointThuong;
-  int totalPointSuaLon;
-  int tienNo;
+  int point;
+  int point1;
+  int owe;
   Customer({
     String? id,
     DateTime? createTime,
     required this.name,
     this.phoneNumber,
     this.address,
-    this.totalPointThuong = 0,
-    this.totalPointSuaLon = 0,
-    this.tienNo = 0,
+    this.point = 0,
+    this.point1 = 0,
+    this.owe = 0,
   }) : super(id: id, createTime: createTime);
 
 
@@ -27,9 +27,9 @@ class Customer extends BaseModel {
       'name': name,
       'phoneNumber': phoneNumber,
       'address': address,
-      'totalPointThuong': totalPointThuong,
-      'totalPointSuaLon': totalPointSuaLon,
-      'tienNo': tienNo,
+      'point': point,
+      'point1': point1,
+      'owe': owe,
       'createTime': createTime,
       'customer' : this,
     };
@@ -52,9 +52,9 @@ class Customer extends BaseModel {
       createTime: createTime ?? this.createTime,
       address: address ?? this.address,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      tienNo: tienNo ?? this.tienNo,
-      totalPointSuaLon: totalPointSuaLon ?? this.totalPointSuaLon,
-      totalPointThuong: totalPointThuong ?? this.totalPointThuong,
+      owe: tienNo ?? this.owe,
+      point1: totalPointSuaLon ?? this.point1,
+      point: totalPointThuong ?? this.point,
     );
   }
 

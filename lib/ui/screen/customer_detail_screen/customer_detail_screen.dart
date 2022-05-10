@@ -209,7 +209,7 @@ class BoxPoint extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${format.format(viewModel.currentCustomer?.totalPointThuong ?? 0)}đ',
+                  '${format.format(viewModel.currentCustomer?.point ?? 0)}đ',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -230,7 +230,7 @@ class BoxPoint extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${format.format(viewModel.currentCustomer?.totalPointSuaLon ?? 0)}đ',
+                  '${format.format(viewModel.currentCustomer?.point1 ?? 0)}đ',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -251,7 +251,7 @@ class BoxPoint extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${format.format(viewModel.currentCustomer?.tienNo ?? 0)} VNĐ',
+                  '${format.format(viewModel.currentCustomer?.owe ?? 0)} VNĐ',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
@@ -341,7 +341,7 @@ class _ListPointDetail extends StatelessWidget {
               icon: Icon(CupertinoIcons.add),
               label: Text('Thêm'),
               onPressed: () async {
-                await dialogPoint(context, pointType);
+                //await dialogPoint(context, pointType);
               },
             ),
           ],
@@ -377,8 +377,8 @@ class _ListPointDetail extends StatelessWidget {
                 children: [
                   Text(
                     pointType == PointType.no
-                        ? '${format.format(pointDetail.point)}vnđ'
-                        : '${format.format(pointDetail.point)}đ',
+                        ? '${format.format(pointDetail.value)}vnđ'
+                        : '${format.format(pointDetail.value)}đ',
                     style: TextStyle(
                       fontSize: 23,
                       fontWeight: FontWeight.w500,
@@ -421,7 +421,7 @@ class _ListPointDetail extends StatelessWidget {
                               _dialog.show(message: 'Chờ một lát...');
                               await context
                                   .read<ICustomerViewModel>()
-                                  .deletePoint(pointDetail, pointType);
+                                  .deletePoint(pointDetail);
                               _dialog.hide();
                               Get.back();
                             },
@@ -455,121 +455,3 @@ class _ListPointDetail extends StatelessWidget {
   }
 }
 
-Future<void> dialogPoint(BuildContext context, PointType pointType) async {
-  TextEditingController pointController = TextEditingController();
-  TextEditingController commentController = TextEditingController();
-  final GlobalKey<FormState> _formKeyPoint = GlobalKey<FormState>();
-  final viewModel = context.read<ICustomerViewModel>();
-  final _dialog =
-      SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: Container(
-        width: 600,
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Form(
-              key: _formKeyPoint,
-              child: MyTextFormField(
-                  lable: Text(pointType == PointType.no ? 'Tiền nợ' : 'Điểm '),
-                  controller: pointController,
-                  textInputType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  validator: (value) {
-                    if (value!.trim().isEmpty) {
-                      return 'Không được bỏ trống';
-                    }
-                  }),
-            ),
-            SizedBox(height: 20),
-            MyTextFormField(
-              lable: Text('Nội dung'),
-              controller: commentController,
-              textInputType: TextInputType.text,
-            ),
-            SizedBox(height: 30),
-            MyButton(
-              child: Text(
-                pointType == PointType.no ? 'Thêm nợ' : 'Thêm',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              height: 60,
-              onPressed: () async {
-                if (_formKeyPoint.currentState!.validate()) {
-                  _dialog.show(message: 'Đợi 1 lát');
-                  await viewModel.addPoint(
-                    viewModel.currentCustomer!,
-                    commentController.text.trim(),
-                    int.parse(pointController.text.trim()),
-                    1,
-                    pointType,
-                  );
-                  viewModel
-                      .getCustomerPointDetails(viewModel.currentCustomer!.id!);
-                  _dialog.hide();
-                  Get.back();
-                }
-              },
-              color: Color(0xFF06A014),
-            ),
-            SizedBox(height: 16),
-            MyButton(
-              child: Text(
-                pointType == PointType.no ? 'Trả nợ' : 'Đổi điểm',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              onPressed: () async {
-                if (_formKeyPoint.currentState!.validate()) {
-                  _dialog.show(message: 'Đợi 1 lát');
-                  await viewModel.addPoint(
-                    viewModel.currentCustomer!,
-                    commentController.text.trim(),
-                    int.parse(pointController.text.trim()),
-                    2,
-                    pointType,
-                  );
-                  viewModel
-                      .getCustomerPointDetails(viewModel.currentCustomer!.id!);
-                  _dialog.hide();
-                  Get.back();
-                }
-              },
-              height: 60,
-              color: Color(0xFFEA2027),
-            ),
-            SizedBox(height: 16),
-            MyButton(
-              child: Text(
-                'Huỷ bỏ',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              onPressed: () {
-                Get.back();
-              },
-              height: 60,
-              color: Color(0xFF979797),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
-      ),
-    ),
-  );
-}

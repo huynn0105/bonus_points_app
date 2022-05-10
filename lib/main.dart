@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         builder: () => GetMaterialApp(
           title: 'Điểm tích luỹ',
           onGenerateRoute: (settings) => MyRouter.generateRoute(settings),
-          initialRoute: MyRouter.signin,
+          initialRoute: MyRouter.home,
           color: Color(0xFF0A7AFF),
           theme: ThemeData(
             primarySwatch: Colors.blue,
