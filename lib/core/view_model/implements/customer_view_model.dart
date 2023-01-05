@@ -150,6 +150,13 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     _allCustomers = allData.docs
         .map((e) => Customer.fromJson(e.data() as Map<String, dynamic>))
         .toList();
+    for (var customer in _allCustomers) {
+      var dataPointDetailFb =
+          await customers.doc(customer.id).collection('point_detail').get();
+      customer.listPoint = dataPointDetailFb.docs
+          .map((e) => PointDetail.fromJson(e.data()))
+          .toList();
+    }
   }
 
   void searchCustomer(String searchText) {
@@ -227,7 +234,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     if (customer.owe != 0) {
       pointDetail = pointDetail.copyWith(value: customer.owe, type: 2);
     }
-
+    customer.listPoint.add(pointDetail);
     await _putPointDetailFirebase(pointDetail);
 
     notifyListeners();
@@ -280,17 +287,20 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     if (point != 0) {
       pointEntity = pointEntity.copyWith(value: point, type: 0);
       customer.point += point;
+      customer.listPoint.add(pointEntity);
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
     if (point1 != 0) {
       customer.point1 += point1;
       pointEntity = pointEntity.copyWith(value: point1, type: 1);
+      customer.listPoint.add(pointEntity);
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
 
     if (owe != 0) {
       customer.owe += owe;
       pointEntity = pointEntity.copyWith(value: owe, type: 2);
+      customer.listPoint.add(pointEntity);
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
 
@@ -349,23 +359,30 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     switch (filterType) {
       case FilterType.point:
         _allCustomers.sort((b, a) => a.point.compareTo(b.point));
-
         break;
       case FilterType.point1:
         _allCustomers.sort((b, a) => a.point1.compareTo(b.point1));
-
         break;
       case FilterType.owe:
         _allCustomers.sort((b, a) => a.owe.compareTo(b.owe));
-
         break;
       case FilterType.crateTime:
         _allCustomers.sort((b, a) => a.createTime!.compareTo(b.createTime!));
+        break;
+      case FilterType.buybest:
+        _allCustomers.sort((b, a) {
+          final totalDiemA = a.listPoint
+              .where((e) => e.type == 0 && e.value > 0)
+              .fold<double>(0, (prev, ele) => prev + ele.value);
+          final totalDiemB = b.listPoint
+              .where((e) => e.type == 0 && e.value > 0)
+              .fold<double>(0, (prev, ele) => prev + ele.value);
 
+          return totalDiemA.compareTo(totalDiemB);
+        });
         break;
       default:
         _allCustomers.sort((b, a) => a.point.compareTo(b.point));
-
         break;
     }
     _customersUI.addAll(_allCustomers.take(100).toList());
@@ -386,7 +403,9 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
                 startDate.millisecondsSinceEpoch &&
             x.createTime!.millisecondsSinceEpoch <=
                 endDate.millisecondsSinceEpoch)
-        .toList().take(100).toList();
+        .toList()
+        .take(100)
+        .toList();
     _customersUI.clear();
     _customersUI.addAll(customers);
     notifyListeners();

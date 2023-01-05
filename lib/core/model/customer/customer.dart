@@ -1,4 +1,5 @@
 import 'package:bonus_points_app/core/model/base_model.dart';
+import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'customer.g.dart';
 
@@ -10,6 +11,7 @@ class Customer extends BaseModel {
   int point;
   int point1;
   int owe;
+  List<PointDetail> listPoint;
   Customer({
     String? id,
     DateTime? createTime,
@@ -19,10 +21,10 @@ class Customer extends BaseModel {
     this.point = 0,
     this.point1 = 0,
     this.owe = 0,
+    this.listPoint = const [],
   }) : super(id: id, createTime: createTime);
 
-
-    Map<String, dynamic> get values {
+  Map<String, dynamic> get values {
     return {
       'name': name,
       'phoneNumber': phoneNumber,
@@ -31,10 +33,9 @@ class Customer extends BaseModel {
       'point1': point1,
       'owe': owe,
       'createTime': createTime,
-      'customer' : this,
+      'customer': this,
     };
   }
-
 
   Customer copyWith({
     String? id,
@@ -45,7 +46,7 @@ class Customer extends BaseModel {
     int? totalPointThuong,
     int? totalPointSuaLon,
     int? tienNo,
-  }){
+  }) {
     return Customer(
       id: id ?? this.id,
       name: name ?? this.name,

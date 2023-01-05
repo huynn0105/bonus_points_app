@@ -32,6 +32,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
       pointController,
       addressController,
       point1Controller,
+      totalPointeController,
       oweController;
   late TextEditingController phoneController;
   late TextEditingController commentController;
@@ -45,6 +46,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     usernameController = TextEditingController(text: customer.name);
     point1Controller = TextEditingController(text: customer.point1.toString());
     oweController = TextEditingController(text: customer.owe.toString());
+    totalPointeController = TextEditingController(text: customer.listPoint.fold<double>(0, (prev, e) => prev + ((e.type == 0 && e.value > 0) ? e.value : 0)).toString());
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -219,6 +221,17 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    MyTextFormField(
+                      width: 300.w,
+                      lable: 'Tổng điểm thường (Không tính đã đổi điểm)',
+                      readOnly: true,
+                      controller: totalPointeController,
+                      textInputType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
                       ],
                     ),
                     const SizedBox(height: 40),
@@ -413,11 +426,11 @@ class _TransactionItem extends StatelessWidget {
     String getType() {
       switch (detail.type) {
         case 0:
-          return 'Điểm';
+          return detail.value > 0 ? 'Điểm' : 'Đổi điểm';
         case 1:
-          return 'Điểm lon';
+          return detail.value > 0  ? 'Điểm lon' : 'Đổi điểm lon';
         case 2:
-          return 'Nợ';
+          return detail.value > 0  ? 'Nợ' : 'Trả nợ';
         default:
           return '';
       }

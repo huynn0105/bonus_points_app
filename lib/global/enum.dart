@@ -9,4 +9,5 @@ enum FilterType{
   owe,
   crateTime,
   none,
+  buybest,
 }

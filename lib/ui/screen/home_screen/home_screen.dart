@@ -295,6 +295,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     _reset();
                   },
                 ),
+                SizedBox(height: 16),
+                MyFunction(
+                  title: 'Top mua nhiều',
+                  active: _viewModel.filterType == FilterType.buybest,
+                  color: Colors.teal,
+                  onPreesed: () {
+                    _viewModel.filterBy(FilterType.buybest);
+                    _reset();
+                  },
+                ),
               ],
             );
           }),
