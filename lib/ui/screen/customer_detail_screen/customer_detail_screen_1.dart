@@ -3,10 +3,8 @@ import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
 import 'package:bonus_points_app/ui/screen/add_point_screen/add_point_screen.dart';
 import 'package:bonus_points_app/ui/screen/delete_customer_screen/delete_customer_screen.dart';
-import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/widgets/my_button.dart';
 import 'package:bonus_points_app/ui/widgets/my_text_form_field.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,7 +44,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     usernameController = TextEditingController(text: customer.name);
     point1Controller = TextEditingController(text: customer.point1.toString());
     oweController = TextEditingController(text: customer.owe.toString());
-    totalPointeController = TextEditingController(text: customer.listPoint.fold<double>(0, (prev, e) => prev + ((e.type == 0 && e.value > 0) ? e.value : 0)).toString());
+    totalPointeController = TextEditingController(text: customer.bestByYear.toString());
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -94,7 +92,6 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                   content: AddPoint(
                     customer: widget.customer,
                     onAddPoint: (point, point1, owe) {
-               
                       pointController.text =
                           (int.parse(pointController.text) + point).toString();
                       point1Controller.text =
@@ -226,7 +223,8 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                     const SizedBox(height: 40),
                     MyTextFormField(
                       width: 300.w,
-                      lable: 'Tổng điểm thường (Không tính đã đổi điểm)',
+                      lable:
+                          'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2022',
                       readOnly: true,
                       controller: totalPointeController,
                       textInputType: TextInputType.number,
@@ -326,14 +324,18 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                                 builder: (context) => AlertDialog(
                                   content: AddPoint(
                                     customer: widget.customer,
-                                    onAddPoint: (point,point1,owe){
-                                               pointController.text =
-                          (int.parse(pointController.text) + point).toString();
-                      point1Controller.text =
-                          (int.parse(point1Controller.text) + point1)
-                              .toString();
-                      oweController.text =
-                          (int.parse(oweController.text) + owe).toString();
+                                    onAddPoint: (point, point1, owe) {
+                                      pointController.text =
+                                          (int.parse(pointController.text) +
+                                                  point)
+                                              .toString();
+                                      point1Controller.text =
+                                          (int.parse(point1Controller.text) +
+                                                  point1)
+                                              .toString();
+                                      oweController.text =
+                                          (int.parse(oweController.text) + owe)
+                                              .toString();
                                     },
                                   ),
                                 ),
@@ -428,9 +430,9 @@ class _TransactionItem extends StatelessWidget {
         case 0:
           return detail.value > 0 ? 'Điểm' : 'Đổi điểm';
         case 1:
-          return detail.value > 0  ? 'Điểm lon' : 'Đổi điểm lon';
+          return detail.value > 0 ? 'Điểm lon' : 'Đổi điểm lon';
         case 2:
-          return detail.value > 0  ? 'Nợ' : 'Trả nợ';
+          return detail.value > 0 ? 'Nợ' : 'Trả nợ';
         default:
           return '';
       }

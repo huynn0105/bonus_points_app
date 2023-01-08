@@ -50,6 +50,6 @@ class PointDetail extends BaseModel {
   }
 
   factory PointDetail.fromJson(Map<String, dynamic> json) =>
-      _$PointDetailEntityFromJson(json);
-  Map<String, dynamic> toJson() => _$PointDetailEntityToJson(this);
+      _$PointDetailFromJson(json);
+  Map<String, dynamic> toJson() => _$PointDetailToJson(this);
 }
