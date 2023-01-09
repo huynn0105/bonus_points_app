@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -24,7 +24,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late ICustomerViewModel _viewModel;
-  late SimpleFontelicoProgressDialog _dialog;
+  late ProgressDialog _dialog;
   late TextEditingController searchController;
   DateTime? _startDate;
   DateTime? _endDate;
@@ -34,12 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
     _endDate = null;
     _viewModel = context.read<ICustomerViewModel>();
     searchController = TextEditingController();
-    _dialog = SimpleFontelicoProgressDialog(
-        context: context, barrierDimisable: false);
+    _dialog = ProgressDialog(context: context);
+
     Future.delayed(Duration.zero, () async {
-      _dialog.show(message: 'Đợi một lát...');
+      _dialog.show(
+        barrierColor: Colors.black26,
+        msg:
+            'Đang tải dữ liệu lần đầu tiên!\nVui lòng không tải lại trang hoặc\nthoát trang để dữ liệu được đồng bộ hoàn toàn!',
+        max: 100,
+        msgMaxLines: 3,
+        msgFontWeight: FontWeight.w500,
+        msgFontSize: 20,
+      );
       await _viewModel.syncData();
-      _dialog.hide();
+      _dialog.close();
     });
     super.initState();
   }
@@ -368,8 +376,6 @@ class CustomerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SimpleFontelicoProgressDialog _dialog = SimpleFontelicoProgressDialog(
-        context: context, barrierDimisable: false);
     final _viewModel = context.read<ICustomerViewModel>();
     final format = NumberFormat('# ###');
     return Card(
