@@ -111,9 +111,16 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _getAllCustomers() async {
     var allData = await customers.get();
-    _allCustomers = allData.docs
-        .map((e) => Customer.fromJson(e.data() as Map<String, dynamic>))
-        .toList();
+
+    for (var customerDto in allData.docs) {
+      try {
+        var customer =
+            Customer.fromJson(customerDto.data() as Map<String, dynamic>);
+        _allCustomers.add(customer);
+      } catch (e) {
+        print(customerDto);
+      }
+    }
   }
 
   void searchCustomer(String searchText) {
