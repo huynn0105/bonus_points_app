@@ -135,7 +135,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       _searched = true;
     } else {
       _customersUI.clear();
-      _customersUI.addAll(_allCustomers);
+      _customersUI.addAll(_allCustomers.take(100).toList());
     }
     _filterType = FilterType.none;
     notifyListeners();

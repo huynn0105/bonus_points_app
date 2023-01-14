@@ -44,7 +44,8 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     usernameController = TextEditingController(text: customer.name);
     point1Controller = TextEditingController(text: customer.point1.toString());
     oweController = TextEditingController(text: customer.owe.toString());
-    totalPointeController = TextEditingController(text: customer.bestByYear.toString());
+    totalPointeController =
+        TextEditingController(text: customer.bestByYear.toString());
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -374,6 +375,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                               style: bodyStyle,
                             ),
                           ),
+                          IconButton(onPressed: null, icon: SizedBox.shrink()),
                         ],
                       ),
                     ),
@@ -382,12 +384,51 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                       return ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) => _TransactionItem(
-                          detail: _vm.customerPointDetails[index],
-                          color: index % 2 == 0
-                              ? Colors.grey.shade100
-                              : Colors.grey.shade300,
-                        ),
+                        itemBuilder: (context, index) {
+                          final point = _vm.customerPointDetails[index];
+                          return _TransactionItem(
+                            detail: point,
+                            color: index % 2 == 0
+                                ? Colors.grey.shade100
+                                : Colors.grey.shade300,
+                            onDeletePoint: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: DeletePoint(
+                                          pointDetail: point,
+                                          onDeletePoint: (value) {
+                                            switch (point.type) {
+                                              case 0:
+                                                pointController.text =
+                                                    (int.parse(pointController
+                                                                .text) -
+                                                            value)
+                                                        .toString();
+                                                break;
+                                              case 1:
+                                                point1Controller.text =
+                                                    (int.parse(point1Controller
+                                                                .text) -
+                                                            value)
+                                                        .toString();
+                                                break;
+                                              case 2:
+                                                oweController.text = (int.parse(
+                                                            oweController
+                                                                .text) -
+                                                        value)
+                                                    .toString();
+                                                break;
+                                              default:
+                                            }
+                                          }),
+                                    );
+                                  });
+                            },
+                          );
+                        },
                         itemCount: _vm.customerPointDetails.length,
                       );
                     })
@@ -417,9 +458,11 @@ class _TransactionItem extends StatelessWidget {
     Key? key,
     required this.detail,
     required this.color,
+    required this.onDeletePoint,
   }) : super(key: key);
   final PointDetail detail;
   final Color color;
+  final VoidCallback onDeletePoint;
 
   @override
   Widget build(BuildContext context) {
@@ -473,6 +516,98 @@ class _TransactionItem extends StatelessWidget {
                   : '${format.format(detail.value)} điểm',
               style: bodyStyle,
             ),
+          ),
+          IconButton(
+              onPressed: onDeletePoint,
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ))
+        ],
+      ),
+    );
+  }
+}
+
+class DeletePoint extends StatelessWidget {
+  const DeletePoint({
+    Key? key,
+    required this.pointDetail,
+    required this.onDeletePoint,
+  }) : super(key: key);
+
+  final PointDetail pointDetail;
+  final void Function(int)? onDeletePoint;
+
+  @override
+  Widget build(BuildContext context) {
+    final _dialog = SimpleFontelicoProgressDialog(
+        context: context, barrierDimisable: false);
+
+    return SizedBox(
+      width: 450,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox.shrink(),
+              Text(
+                'Xác nhận xoá',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  Get.back();
+                },
+                icon: Icon(
+                  Icons.highlight_remove,
+                  color: Colors.grey,
+                  size: 35,
+                ),
+              ),
+            ],
+          ),
+          Divider(),
+          SizedBox(height: 20),
+          Text('Bạn muốn xoá điểm này?'),
+          SizedBox(height: 20),
+          Divider(),
+          SizedBox(height: 15),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              MyButton(
+                  width: 150,
+                  child: Text(
+                    'Huỷ bỏ',
+                  ),
+                  color: Colors.grey,
+                  onPressed: () {
+                    Get.back();
+                  }),
+              SizedBox(width: 20),
+              MyButton(
+                  width: 150,
+                  child: Text(
+                    'Xoá',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  color: Color(0xFFEA2027),
+                  onPressed: () async {
+                    _dialog.show(message: 'Chờ một lát...');
+                    await context
+                        .read<ICustomerViewModel>()
+                        .deletePoint(pointDetail);
+                    onDeletePoint?.call(pointDetail.value);
+                    _dialog.hide();
+                    Get.back();
+                  }),
+            ],
           ),
         ],
       ),
