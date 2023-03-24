@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyButton extends StatelessWidget {
   final Color? color;
   final Widget child;
-  final Function() onPressed;
+  final VoidCallback onPressed;
   final double? width;
   final double? height;
+  final double? borderRadius;
 
   const MyButton({
     Key? key,
     this.color,
     this.width,
     this.height,
+    this.borderRadius,
     required this.child,
     required this.onPressed,
   }) : super(key: key);
@@ -23,9 +24,12 @@ class MyButton extends StatelessWidget {
       onPressed: onPressed,
       child: child,
       style: ElevatedButton.styleFrom(
-        minimumSize: Size(width ?? double.infinity, height ?? 44.h),
+        minimumSize: Size(width ?? 140, height ?? 49),
         primary: color,
-        elevation: 1,
+        elevation: 5,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(borderRadius ?? 8.0),
+        ),
       ),
     );
   }

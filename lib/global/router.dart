@@ -1,9 +1,10 @@
-import 'package:bonus_points_app/core/ui_model/customer_ui_model.dart';
+import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/ui/screen/add_customer_screen/add_customer_screen.dart';
 import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detail_screen.dart';
+import 'package:bonus_points_app/ui/screen/customer_detail_screen/customer_detail_screen_1.dart';
+import 'package:bonus_points_app/ui/screen/home_screen/home_screen1.dart';
 import 'package:bonus_points_app/ui/screen/home_screen/home_screen.dart';
 import 'package:bonus_points_app/ui/screen/sign_in_screen/sign_in_screen.dart';
-import 'package:bonus_points_app/ui/screen/splash_screen/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class MyRouter {
@@ -12,6 +13,7 @@ class MyRouter {
   static const String home = '/home';
   static const String addCustomer = '/addCustomer';
   static const String detail = '/detail';
+  static const String customers = '/customers';
 
   static PageRouteBuilder _buildRouteNavigation(
       RouteSettings settings, Widget widget) {
@@ -23,11 +25,6 @@ class MyRouter {
 
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
-      case splash:
-        return _buildRouteNavigation(
-          settings,
-          SplashScreen(),
-        );
       case signin:
         return _buildRouteNavigation(
           settings,
@@ -38,20 +35,25 @@ class MyRouter {
           settings,
           HomeScreen(),
         );
-      case addCustomer:
+      case customers:
         return _buildRouteNavigation(
           settings,
-          AddCustomerScreen(
-            customer: settings.arguments != null
-                ? settings.arguments as CustomerUIModel
-                : null,
-          ),
+          HomeScreen1(),
         );
       case detail:
         return _buildRouteNavigation(
           settings,
-          CustomerDetailScreen(
-            customer: settings.arguments as CustomerUIModel,
+          CustomerDetailScreen1(
+            customer: settings.arguments as Customer,
+          ),
+        );
+      default:
+        return _buildRouteNavigation(
+          settings,
+          Scaffold(
+            body: Center(
+              child: Text('No route found: ${settings.name}.'),
+            ),
           ),
         );
     }

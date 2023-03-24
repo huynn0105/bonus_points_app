@@ -1,12 +1,10 @@
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
 
-class BaseEntity extends HiveObject {
-  @HiveField(0)
+class BaseModel  {
   String? id;
   DateTime? createTime;
 
-  BaseEntity({this.id, this.createTime}) {
+  BaseModel({this.id, this.createTime}) {
     if (id == null) {
       id = Uuid().v4();
     }

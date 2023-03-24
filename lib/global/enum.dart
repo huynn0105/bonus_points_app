@@ -1,4 +1,13 @@
 enum Types{
-  accumulatePoints,
-  Redeem,
+  Thuong,
+  SuaHop,
+}
+
+enum FilterType{
+  point,
+  point1,
+  owe,
+  crateTime,
+  none,
+  buybest,
 }
