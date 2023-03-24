@@ -196,8 +196,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     _dialog.show(message: 'Đợi một lát...');
 
     final point = int.tryParse(pointController.text) ?? 0;
-    final point1 = int.tryParse(pointController.text) ?? 0;
-    final owe = int.tryParse(pointController.text) ?? 0;
+    final point1 = int.tryParse(point1Controller.text) ?? 0;
+    final owe = int.tryParse(oweController.text) ?? 0;
     Customer customerEntity = Customer(
       name: usernameController.text.trim(),
       phoneNumber: phoneController.text.trim(),
