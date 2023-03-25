@@ -53,11 +53,12 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-      apiKey: "AIzaSyBLESSQlE9i_7X4puO3y_MrxhXUF2CbmZg",
-      authDomain: "mai-khoi-shop.firebaseapp.com",
-      projectId: "mai-khoi-shop",
-      storageBucket: "mai-khoi-shop.appspot.com",
-      messagingSenderId: "187812596324",
-      appId: "1:187812596324:web:4a60ac9974b15ebfafed71",
-      measurementId: "G-9C6LM3J88Q");
+    apiKey: 'AIzaSyBXw9x4S_8SMGDzvn2TxPbMzxXqJffPRLc',
+    appId: '1:760993751817:web:8bf951c88df33064cee9d8',
+    messagingSenderId: '760993751817',
+    projectId: 'shopsuamaikhoi',
+    authDomain: 'shopsuamaikhoi.web.app',
+    storageBucket: 'shopsuamaikhoi.appspot.com',
+    measurementId: 'G-04DP50RDVR',
+  );
 }
