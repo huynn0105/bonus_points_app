@@ -30,7 +30,6 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
       pointController,
       addressController,
       point1Controller,
-      totalPointeController,
       oweController;
   late TextEditingController phoneController;
   late TextEditingController commentController;
@@ -44,8 +43,8 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     usernameController = TextEditingController(text: customer.name);
     point1Controller = TextEditingController(text: customer.point1.toString());
     oweController = TextEditingController(text: customer.owe.toString());
-    totalPointeController =
-        TextEditingController(text: customer.bestByYear.toString());
+    // totalPointeController =
+    //     TextEditingController(text: customer.bestByYear.toString());
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -221,18 +220,18 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 40),
-                    MyTextFormField(
-                      width: 300.w,
-                      lable:
-                          'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2022',
-                      readOnly: true,
-                      controller: totalPointeController,
-                      textInputType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
+                    // const SizedBox(height: 40),
+                    // MyTextFormField(
+                    //   width: 300.w,
+                    //   lable:
+                    //       'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2022',
+                    //   readOnly: true,
+                    //   controller: totalPointeController,
+                    //   textInputType: TextInputType.number,
+                    //   inputFormatters: <TextInputFormatter>[
+                    //     FilteringTextInputFormatter.digitsOnly
+                    //   ],
+                    // ),
                     const SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,

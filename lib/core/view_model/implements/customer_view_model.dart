@@ -12,7 +12,7 @@ const path = 'point_detail';
 
 class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   CollectionReference customers =
-      FirebaseFirestore.instance.collection('customers_v3');
+      FirebaseFirestore.instance.collection('customers');
 
   List<Customer> _customersToDisplay = [];
   List<Customer> _customersUI = [];
@@ -86,15 +86,15 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       _customerPointDetails = dataPointDetailFb.docs
           .map((e) => PointDetail.fromJson(e.data()))
           .toList();
-      final listInYear = _customerPointDetails
-          .where((element) =>
-              element.type == 0 &&
-              element.value > 0 &&
-              (element.createTime!.compareTo(lastYear) >= 0))
-          .toList();
+      // final listInYear = _customerPointDetails
+      //     .where((element) =>
+      //         element.type == 0 &&
+      //         element.value > 0 &&
+      //         (element.createTime!.compareTo(lastYear) >= 0))
+      //     .toList();
 
-      int bestByYear = listInYear.fold(0, (prev, e) => prev + e.value);
-      customer.bestByYear = bestByYear;
+      // int bestByYear = listInYear.fold(0, (prev, e) => prev + e.value);
+      // customer.bestByYear = bestByYear;
       // await customers3.doc(customerId).set(customer.toJson());
       // for (var pointDetail in _customerPointDetails) {
       //     await customers3
@@ -322,24 +322,20 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     switch (filterType) {
       case FilterType.point:
         _allCustomers.sort((b, a) => a.point.compareTo(b.point));
-
         break;
+
       case FilterType.point1:
         _allCustomers.sort((b, a) => a.point1.compareTo(b.point1));
-
         break;
+
       case FilterType.owe:
         _allCustomers.sort((b, a) => a.owe.compareTo(b.owe));
-
         break;
+
       case FilterType.crateTime:
         _allCustomers.sort((b, a) => a.createTime!.compareTo(b.createTime!));
+        break;
 
-        break;
-      case FilterType.buybest:
-        _allCustomers.sort((b, a) => a.bestByYear.compareTo(b.bestByYear));
-        notifyListeners();
-        break;
       default:
         _allCustomers.sort((b, a) => a.point.compareTo(b.point));
         break;

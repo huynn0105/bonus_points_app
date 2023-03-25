@@ -1,5 +1,6 @@
 import 'package:bonus_points_app/core/view_model/implements/customer_view_model.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
+import 'package:bonus_points_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,16 +13,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: "AIzaSyCcQaNsbUSUesVnJ5QSEgSrss5t5BXu7j8",
-      authDomain: "accumulatepoints-49382.firebaseapp.com",
-      databaseURL: "accumulatepoints-49382.firebaseio.com",
-      projectId: "accumulatepoints-49382",
-      storageBucket: "accumulatepoints-49382.appspot.com",
-      messagingSenderId: "376016726467",
-      appId: "1:376016726467:web:dbb7493c41ae76637b3576",
-      measurementId: "G-XZTBM793NJ",
-    ),
+    options: DefaultFirebaseOptions.web,    
+    // options: FirebaseOptions(
+    //   apiKey: "AIzaSyCcQaNsbUSUesVnJ5QSEgSrss5t5BXu7j8",
+    //   authDomain: "accumulatepoints-49382.firebaseapp.com",
+    //   databaseURL: "accumulatepoints-49382.firebaseio.com",
+    //   projectId: "accumulatepoints-49382",
+    //   storageBucket: "accumulatepoints-49382.appspot.com",
+    //   messagingSenderId: "376016726467",
+    //   appId: "1:376016726467:web:dbb7493c41ae76637b3576",
+    //   measurementId: "G-XZTBM793NJ",
+    // ),
   );
 
   runApp(MyApp());

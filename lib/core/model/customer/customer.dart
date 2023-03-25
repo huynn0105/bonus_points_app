@@ -11,7 +11,6 @@ class Customer extends BaseModel {
   int point;
   int point1;
   int owe;
-  int bestByYear;
   Customer({
     String? id,
     DateTime? createTime,
@@ -21,7 +20,6 @@ class Customer extends BaseModel {
     this.point = 0,
     this.point1 = 0,
     this.owe = 0,
-    this.bestByYear = 0,
   }) : super(id: id, createTime: createTime);
 
   Map<String, dynamic> get values {
@@ -46,7 +44,6 @@ class Customer extends BaseModel {
     int? totalPointThuong,
     int? totalPointSuaLon,
     int? tienNo,
-    int? bestByYear,
   }) {
     return Customer(
       id: id ?? this.id,
@@ -57,7 +54,6 @@ class Customer extends BaseModel {
       owe: tienNo ?? this.owe,
       point1: totalPointSuaLon ?? this.point1,
       point: totalPointThuong ?? this.point,
-      bestByYear: bestByYear?? this.bestByYear,
     );
   }
 

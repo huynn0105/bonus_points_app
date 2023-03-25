@@ -15,7 +15,6 @@ Customer _$CustomerFromJson(Map<String, dynamic> json) => Customer(
       point: (json['point'] ?? 0) as int,
       point1: (json['point1'] ?? 0) as int,
       owe: (json['owe'] ?? 0) as int,
-      bestByYear: json['bestByYear'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
@@ -27,5 +26,4 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
       'point': instance.point,
       'point1': instance.point1,
       'owe': instance.owe,
-      'bestByYear': instance.bestByYear,
     };
