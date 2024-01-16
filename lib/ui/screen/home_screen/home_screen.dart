@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 MyFunction(
-                    title: 'Vừa cập nhập',
+                    title: 'Vừa cập nhật',
                     color: Colors.green.shade300,
                     active: _viewModel.filterType == FilterType.crateTime,
                     onPreesed: () {

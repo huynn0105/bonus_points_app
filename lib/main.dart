@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: ScreenUtilInit(
-        builder: () => GetMaterialApp(
+        builder: (_,child) => GetMaterialApp(
           title: 'Điểm tích luỹ',
           onGenerateRoute: (settings) => MyRouter.generateRoute(settings),
           initialRoute: MyRouter.home,

@@ -44,8 +44,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     usernameController = TextEditingController(text: customer.name);
     point1Controller = TextEditingController(text: customer.point1.toString());
     oweController = TextEditingController(text: customer.owe.toString());
-    totalPointeController =
-        TextEditingController(text: customer.bestByYear.toString());
+    totalPointeController = TextEditingController();
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -57,6 +56,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     Future.delayed(Duration.zero, () async {
       _dialog.show(message: 'Đợi 1 lát');
       await _viewModel.getCustomerPointDetails(widget.customer.id!);
+      totalPointeController.text = _viewModel.totalPointOfYear.toString();
       _dialog.hide();
     });
   }
@@ -223,9 +223,9 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                     ),
                     const SizedBox(height: 40),
                     MyTextFormField(
-                      width: 300.w,
+                      width: 1.sw / 5,
                       lable:
-                          'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2022',
+                          'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2023',
                       readOnly: true,
                       controller: totalPointeController,
                       textInputType: TextInputType.number,
@@ -286,7 +286,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                             Get.back();
                           },
                           child: Text(
-                            'Cập nhập',
+                            'Cập nhật',
                             style: bodyStyle,
                           ),
                         ),

@@ -24,6 +24,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   FilterType _filterType = FilterType.none;
   bool _searched = false;
   Customer? _currentCustomer;
+  int _totalPointOfYear = 0;
+
+  @override
+  int get totalPointOfYear => _totalPointOfYear;
 
   @override
   Customer? get currentCustomer => _currentCustomer;
@@ -64,10 +68,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   @override
   Future<void> syncData() async {
     _filterType = FilterType.none;
-
     _customersUI.clear();
+
     await _getAllCustomers();
     _customersUI.addAll(_allCustomers.take(100));
+
     notifyListeners();
 
     // await _copyData();
@@ -238,6 +243,13 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         .toList();
     _customerPointDetails
         .sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
+
+    final total = _customerPointDetails
+        .where((x) => x.createTime?.year == 2023 && x.type == 0 && x.value > 0)
+        .fold<int>(0, (prev, next) => prev + next.value);
+
+    _totalPointOfYear = total;
+
     notifyListeners();
   }
 

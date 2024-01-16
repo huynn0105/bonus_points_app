@@ -18,6 +18,7 @@ abstract class ICustomerViewModel with ChangeNotifier {
   List<PointDetail> get customerPointDetailsGhiNo;
   List<PointDetail> get customerPointDetails;
   List<Customer> get customersToDisplay;
+  int get totalPointOfYear;
   FilterType get filterType;
   void filterBy(FilterType filterType);
   void filterByDateRange(DateTime startDate, DateTime endDate);
