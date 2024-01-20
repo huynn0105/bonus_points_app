@@ -11,7 +11,7 @@ const point_detail_ghi_no = 'point_detail_ghi_no';
 const path = 'point_detail';
 
 class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
-  CollectionReference customers =
+  CollectionReference customerRef =
       FirebaseFirestore.instance.collection('customers_v3');
 
   List<Customer> _customersToDisplay = [];
@@ -80,42 +80,80 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _copyData() async {
     await _getAllCustomers();
-    print('start copy data, sum ${_allCustomers.length} record');
-    final lastYear = DateTime(2022, 1, 1, 1);
-    for (int i = 0; i < _allCustomers.length; i++) {
-      var customer = _allCustomers[i];
-      String customerId = customer.id.toString();
-      var dataPointDetailFb =
-          await customers.doc(customerId).collection('point_detail').get();
+    print('start update data, sum ${_allCustomers.length} record');
+    final firstDayOfYear = DateTime(2023, 1, 22, 0, 0, 0);
+    final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
 
-      _customerPointDetails = dataPointDetailFb.docs
+    for (int i = 0; i < _allCustomers.length; i++) {
+      final customer = _allCustomers[i];
+
+      final dataPointDetailFb =
+          await customerRef.doc(customer.id).collection('point_detail').get();
+      final customerPointDetails = dataPointDetailFb.docs
           .map((e) => PointDetail.fromJson(e.data()))
           .toList();
-      final listInYear = _customerPointDetails
-          .where((element) =>
-              element.type == 0 &&
-              element.value > 0 &&
-              (element.createTime!.compareTo(lastYear) >= 0))
+
+      final pointDetailsOfYear = customerPointDetails
+          .where((x) =>
+              x.type == 0 &&
+              x.value > 0 &&
+              firstDayOfYear.isBefore(x.createTime!) &&
+              lastDayOfYear.isAfter(x.createTime!))
           .toList();
 
-      int bestByYear = listInYear.fold(0, (prev, e) => prev + e.value);
-      customer.bestByYear = bestByYear;
-      // await customers3.doc(customerId).set(customer.toJson());
-      // for (var pointDetail in _customerPointDetails) {
-      //     await customers3
-      //     .doc(pointDetail.customerId)
-      //     .collection(path)
-      //     .doc(pointDetail.id!)
+      final totalPointOfYear =
+          pointDetailsOfYear.fold<int>(0, (prev, e) => prev + e.value);
+      final customerUpdate = customer.copyWith(bestByYear: totalPointOfYear);
 
-      //     .set(pointDetail.toJson());
-      // }
-      print('successful $i name ${customer.name}');
+      try {
+        await customerRef
+            .doc(customerUpdate.id!)
+            .update(customerUpdate.toJson());
+
+        print('successful $i name ${customer.name}');
+      } catch (e) {
+        print('fail $i name ${customer.name}');
+      }
     }
-    print('copy data successful + ${_allCustomers.length}');
+    print('update data successful + ${_allCustomers.length}');
+
+    // for (int i = 0; i < _allCustomers.length; i++) {
+    //   for (int i = 0; i < _allCustomers.length; i++) {
+    //     var customer = _allCustomers[i];
+    //     String customerId = customer.id.toString();
+    //     var dataPointDetailFb =
+    //         await customerRef.doc(customerId).collection('point_detail').get();
+
+    //     _customerPointDetails = dataPointDetailFb.docs
+    //         .map((e) => PointDetail.fromJson(e.data()))
+    //         .toList();
+    //     final listInYear = _customerPointDetails
+    //         .where((element) =>
+    //             element.type == 0 &&
+    //             element.value > 0 &&
+    //             (element.createTime!.compareTo(firstDayOfYear) >= 0))
+    //         .toList();
+
+    //     int bestByYear = listInYear.fold(0, (prev, e) => prev + e.value);
+    //     customer.bestByYear = bestByYear;
+
+    //     // await customers3.doc(customerId).set(customer.toJson());
+    //     // for (var pointDetail in _customerPointDetails) {
+    //     //     await customers3
+    //     //     .doc(pointDetail.customerId)
+    //     //     .collection(path)
+    //     //     .doc(pointDetail.id!)
+
+    //     //     .set(pointDetail.toJson());
+    //     // }
+    //     print('successful $i name ${customer.name}');
+    //  }
+    //   print('copy data successful + ${_allCustomers.length}');
+    // }
   }
 
   Future<void> _getAllCustomers() async {
-    var allData = await customers.get();
+    var allData = await customerRef.get();
 
     for (var customerDto in allData.docs) {
       try {
@@ -148,13 +186,13 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _putCustomerFirebase(Customer entity) async {
     try {
-      await customers.doc(entity.id!).set(entity.toJson());
+      await customerRef.doc(entity.id!).set(entity.toJson());
     } catch (e) {}
   }
 
   Future<void> _updateCustomerFirebase(Customer entity) async {
     try {
-      await customers
+      await customerRef
           .doc(entity.id!)
           .update(entity.copyWith(createTime: DateTime.now()).toJson());
     } catch (e) {}
@@ -162,13 +200,13 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _deleteCustomerFirebase(String id) async {
     try {
-      await customers.doc(id).delete();
+      await customerRef.doc(id).delete();
     } catch (e) {}
   }
 
   Future<void> _putPointDetailFirebase(PointDetail entity) async {
     try {
-      await customers
+      await customerRef
           .doc(entity.customerId)
           .collection(path)
           .doc(entity.id!)
@@ -177,7 +215,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> _deletePointDetailFirebase(PointDetail entity) async {
-    await customers
+    await customerRef
         .doc(entity.customerId)
         .collection(path)
         .doc(entity.id!)
@@ -236,7 +274,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> getCustomerPointDetails(String customerId) async {
     var dataPointDetailFb =
-        await customers.doc(customerId).collection('point_detail').get();
+        await customerRef.doc(customerId).collection('point_detail').get();
 
     _customerPointDetails = dataPointDetailFb.docs
         .map((e) => PointDetail.fromJson(e.data()))
@@ -264,7 +302,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     );
     if (point != 0) {
       pointEntity = pointEntity.copyWith(value: point, type: 0);
+      final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
       customer.point += point;
+      if (point > 0 && lastDayOfYear.isAfter(pointEntity.createTime!)) {
+        customer.bestByYear += point;
+      }
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
     if (point1 != 0) {
