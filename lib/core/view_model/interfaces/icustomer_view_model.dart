@@ -29,4 +29,6 @@ abstract class ICustomerViewModel with ChangeNotifier {
 
   bool get searched;
   set searched(bool value);
+
+  Future<void> changeWithdraw(bool isWithdraw, Customer customer,{bool isSort = false});
 }

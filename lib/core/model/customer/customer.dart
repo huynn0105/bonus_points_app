@@ -1,5 +1,4 @@
 import 'package:bonus_points_app/core/model/base_model.dart';
-import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'customer.g.dart';
 
@@ -12,6 +11,9 @@ class Customer extends BaseModel {
   int point1;
   int owe;
   int bestByYear;
+  bool isWithdraw;
+
+
   Customer({
     String? id,
     DateTime? createTime,
@@ -22,6 +24,7 @@ class Customer extends BaseModel {
     this.point1 = 0,
     this.owe = 0,
     this.bestByYear = 0,
+    this.isWithdraw = false
   }) : super(id: id, createTime: createTime);
 
   Map<String, dynamic> get values {
@@ -33,6 +36,7 @@ class Customer extends BaseModel {
       'point1': point1,
       'owe': owe,
       'createTime': createTime,
+      'isWithdraw': isWithdraw,
       'customer': this,
     };
   }
@@ -47,6 +51,7 @@ class Customer extends BaseModel {
     int? totalPointSuaLon,
     int? tienNo,
     int? bestByYear,
+    bool? isWithdraw,
   }) {
     return Customer(
       id: id ?? this.id,
@@ -58,6 +63,7 @@ class Customer extends BaseModel {
       point1: totalPointSuaLon ?? this.point1,
       point: totalPointThuong ?? this.point,
       bestByYear: bestByYear?? this.bestByYear,
+      isWithdraw: isWithdraw?? this.isWithdraw,
     );
   }
 

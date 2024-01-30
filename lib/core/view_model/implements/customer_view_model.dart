@@ -69,7 +69,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   Future<void> syncData() async {
     _filterType = FilterType.none;
     _customersUI.clear();
-
+    //await _copyData();
     await _getAllCustomers();
     _customersUI.addAll(_allCustomers.take(100));
 
@@ -82,7 +82,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     await _getAllCustomers();
     print('start update data, sum ${_allCustomers.length} record');
     final firstDayOfYear = DateTime(2023, 1, 22, 0, 0, 0);
-    final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
+    final lastDayOfYear = DateTime(2024, 2, 9, 23, 59, 59);
 
     for (int i = 0; i < _allCustomers.length; i++) {
       final customer = _allCustomers[i];
@@ -105,12 +105,21 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
           pointDetailsOfYear.fold<int>(0, (prev, e) => prev + e.value);
       final customerUpdate = customer.copyWith(bestByYear: totalPointOfYear);
 
+      final total = _customerPointDetails
+          .where((x) =>
+              firstDayOfYear.isBefore(x.createTime!) &&
+              lastDayOfYear.isAfter(x.createTime!) &&
+              x.type == 0 &&
+              x.value > 0)
+          .fold<int>(0, (prev, next) => prev + next.value);
+
       try {
         await customerRef
             .doc(customerUpdate.id!)
             .update(customerUpdate.toJson());
 
-        print('successful $i name ${customer.name}');
+        print(
+            'successful $i name ${customer.name}: total: $totalPointOfYear ---- $total');
       } catch (e) {
         print('fail $i name ${customer.name}');
       }
@@ -153,7 +162,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> _getAllCustomers() async {
-    var allData = await customerRef.get();
+    var allData = await customerRef.limit(2).get();
 
     for (var customerDto in allData.docs) {
       try {
@@ -256,14 +265,12 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> updateCustomer(Customer customer) async {
-    await _updateCustomerFirebase(customer);
     _removeCustomerList(customer);
     _addCustomerToList(customer);
-
     currentCustomer = customer;
     searched = false;
-
     notifyListeners();
+    await _updateCustomerFirebase(customer);
   }
 
   void _removeCustomerList(Customer customer) {
@@ -282,11 +289,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     _customerPointDetails
         .sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
 
-    final total = _customerPointDetails
-        .where((x) => x.createTime?.year == 2023 && x.type == 0 && x.value > 0)
-        .fold<int>(0, (prev, next) => prev + next.value);
+    // final total = _customerPointDetails
+    //     .where((x) => x.createTime?.year == 2023 && x.type == 0 && x.value > 0)
+    //     .fold<int>(0, (prev, next) => prev + next.value);
 
-    _totalPointOfYear = total;
+    // _totalPointOfYear = total;
 
     notifyListeners();
   }
@@ -421,6 +428,22 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     _customersUI.clear();
     _customersUI.addAll(customers);
     notifyListeners();
+  }
+
+  @override
+  Future<void> changeWithdraw(bool isWithdraw, Customer customer,
+      {bool isSort = false}) async {
+    customer.isWithdraw = isWithdraw;
+    final customerUpdate = customer.copyWith(isWithdraw: isWithdraw);
+
+    if (isSort) {
+      await updateCustomer(customerUpdate);
+    } else {
+      currentCustomer = customer;
+      searched = false;
+      notifyListeners();
+      await _updateCustomerFirebase(customer);
+    }
   }
 }
 

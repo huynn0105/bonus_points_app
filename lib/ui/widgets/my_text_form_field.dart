@@ -12,6 +12,7 @@ class MyTextFormField extends StatelessWidget {
   final double? width;
   final int? maxLines;
   final bool readOnly;
+  final bool isWithdraw;
 
   const MyTextFormField({
     Key? key,
@@ -24,6 +25,7 @@ class MyTextFormField extends StatelessWidget {
     this.width,
     this.maxLines,
     this.readOnly = false,
+    this.isWithdraw = false,
   }) : super(key: key);
 
   @override
@@ -51,6 +53,9 @@ class MyTextFormField extends StatelessWidget {
             minLines: maxLines,
             validator: validator,
             obscureText: obscureText,
+            style: TextStyle(
+              decoration: isWithdraw ? TextDecoration.lineThrough : null,
+            ),
             decoration: InputDecoration(
               hintText: lable,
               contentPadding: EdgeInsets.all(12.r),

@@ -371,7 +371,6 @@ class CustomerItem extends StatelessWidget {
   }) : super(key: key);
 
   final Customer customer;
-
   final int index;
 
   @override
@@ -506,54 +505,98 @@ class CustomerItem extends StatelessWidget {
                         ),
                       ],
                     ),
+                    Text(
+                      'Tổng điểm năm 2023: ${format.format(customer.bestByYear)}',
+                      style: TextStyle(
+                        color: Colors.green[600],
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        decoration: customer.isWithdraw
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
                   ],
                 ),
               ),
               SizedBox(width: 10),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      content: AddPoint(
-                        customer: customer,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              content: AddPoint(
+                                customer: customer,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.add_circle_outline,
+                          color: Color(0xff00b90a),
+                        ),
                       ),
-                    ),
-                  );
-                },
-                icon: const Icon(
-                  Icons.add_circle_outline,
-                  color: Color(0xff00b90a),
-                ),
-              ),
-              const SizedBox(width: 10),
-              IconButton(
-                onPressed: () {
-                  _viewModel.currentCustomer = customer;
-                  Get.toNamed(
-                    MyRouter.detail,
-                    arguments: customer,
-                  );
-                },
-                icon: const Icon(
-                  Icons.edit_outlined,
-                  color: Color(0xffEFCD11),
-                ),
-              ),
-              const SizedBox(width: 10),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      content: DeleteCustomer(customer: customer),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  CupertinoIcons.delete_solid,
-                  color: Colors.red,
-                ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        onPressed: () {
+                          _viewModel.currentCustomer = customer;
+                          Get.toNamed(
+                            MyRouter.detail,
+                            arguments: customer,
+                          );
+                        },
+                        icon: const Icon(
+                          Icons.edit_outlined,
+                          color: Color(0xffEFCD11),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              content: DeleteCustomer(customer: customer),
+                            ),
+                          );
+                        },
+                        icon: Icon(
+                          CupertinoIcons.delete_solid,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Transform.scale(
+                        scale: 1.3,
+                        child: Checkbox(
+                          activeColor: Colors.green[600],
+                          value: customer.isWithdraw,
+                          onChanged: (newValue) async {
+                            await _viewModel.changeWithdraw(
+                                newValue ?? false, customer);
+                          },
+                        ),
+                      ),
+                      Text(
+                        'Đã tặng quà',
+                        style: TextStyle(
+                          color: Colors.green[600],
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    ],
+                  )
+                ],
               ),
             ],
           ),

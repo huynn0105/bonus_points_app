@@ -44,7 +44,8 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     usernameController = TextEditingController(text: customer.name);
     point1Controller = TextEditingController(text: customer.point1.toString());
     oweController = TextEditingController(text: customer.owe.toString());
-    totalPointeController = TextEditingController();
+    totalPointeController =
+        TextEditingController(text: customer.bestByYear.toString());
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -56,7 +57,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     Future.delayed(Duration.zero, () async {
       _dialog.show(message: 'Đợi 1 lát');
       await _viewModel.getCustomerPointDetails(widget.customer.id!);
-      totalPointeController.text = _viewModel.totalPointOfYear.toString();
+
       _dialog.hide();
     });
   }
@@ -222,17 +223,47 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                       ],
                     ),
                     const SizedBox(height: 40),
-                    MyTextFormField(
-                      width: 1.sw / 5,
-                      lable:
-                          'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2023',
-                      readOnly: true,
-                      controller: totalPointeController,
-                      textInputType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                    ),
+                    Consumer<ICustomerViewModel>(builder: (context, _vm, __) {
+                      return Row(
+                        children: [
+                          MyTextFormField(
+                            width: 1.sw / 5,
+                            lable:
+                                'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2023 (Âm Lịch)',
+                            readOnly: true,
+                            controller: totalPointeController,
+                            textInputType: TextInputType.number,
+                            isWithdraw: widget.customer.isWithdraw,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                          ),
+                          SizedBox(width: 20),
+                          Transform.scale(
+                            scale: 1.3,
+                            child: Checkbox(
+                              value: widget.customer.isWithdraw,
+                              activeColor: Colors.green[600],
+                              onChanged: (newValue) async {
+                                await _vm.changeWithdraw(
+                                  newValue ?? false,
+                                  widget.customer,
+                                  isSort: true,
+                                );
+                              },
+                            ),
+                          ),
+                          Text(
+                            'Đã tặng quà',
+                            style: TextStyle(
+                              color: Colors.green[600],
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          )
+                        ],
+                      );
+                    }),
                     const SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
