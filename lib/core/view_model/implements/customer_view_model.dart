@@ -162,7 +162,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> _getAllCustomers() async {
-    var allData = await customerRef.limit(2).get();
+    var allData = await customerRef.get();
 
     for (var customerDto in allData.docs) {
       try {
@@ -233,8 +233,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   @override
   Future<void> addCustomer(Customer customer) async {
-    _addCustomerToList(customer);
-    _putCustomerFirebase(customer);
     var pointDetail = PointDetail(
       value: 0,
       customerId: customer.id!,
@@ -244,6 +242,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
     if (customer.point != 0) {
       pointDetail = pointDetail.copyWith(value: customer.point, type: 0);
+      final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
+      if (lastDayOfYear.isAfter(pointDetail.createTime!)) {
+        customer = customer.copyWith(bestByYear: customer.point);
+      }
     }
     if (customer.point1 != 0) {
       pointDetail = pointDetail.copyWith(value: customer.point1, type: 1);
@@ -252,6 +254,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     if (customer.owe != 0) {
       pointDetail = pointDetail.copyWith(value: customer.owe, type: 2);
     }
+    _addCustomerToList(customer);
+    await _putCustomerFirebase(customer);
     //customer.listPoint.add(pointDetail);
     await _putPointDetailFirebase(pointDetail);
 
@@ -349,6 +353,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     switch (entity.type) {
       case 0:
         customer.point -= entity.value;
+        final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
+        if (lastDayOfYear.isAfter(entity.createTime!)) {
+          customer.bestByYear -= entity.value;
+        }
         break;
 
       case 1:
@@ -362,7 +370,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     await _updateCustomerFirebase(customer);
     _removeCustomerList(customer);
     _addCustomerToList(customer);
-
     notifyListeners();
   }
 
@@ -431,8 +438,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  Future<void> changeWithdraw(bool isWithdraw, Customer customer,
-      {bool isSort = false}) async {
+  Future<void> changeWithdraw(
+    bool isWithdraw,
+    Customer customer, {
+    bool isSort = false,
+  }) async {
     customer.isWithdraw = isWithdraw;
     final customerUpdate = customer.copyWith(isWithdraw: isWithdraw);
 
