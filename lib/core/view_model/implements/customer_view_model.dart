@@ -455,6 +455,24 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       await _updateCustomerFirebase(customer);
     }
   }
+
+  @override
+  Future<void> changeGift(
+      bool isGifted,
+      Customer customer, {
+        bool isSort = false,
+      }) async {
+    customer.isGifted = isGifted;
+    final customerUpdate = customer.copyWith(isGifted: isGifted);
+
+    if (isSort) {
+      await updateCustomer(customerUpdate);
+    } else {
+      currentCustomer = customer;
+      notifyListeners();
+      await _updateCustomerFirebase(customer);
+    }
+  }
 }
 
 enum PointType {

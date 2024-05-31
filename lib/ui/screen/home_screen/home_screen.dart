@@ -511,9 +511,7 @@ class CustomerItem extends StatelessWidget {
                         color: Colors.green[600],
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
-                        decoration: customer.isWithdraw
-                            ? TextDecoration.lineThrough
-                            : null,
+
                       ),
                     ),
                   ],
@@ -579,9 +577,9 @@ class CustomerItem extends StatelessWidget {
                         scale: 1.3,
                         child: Checkbox(
                           activeColor: Colors.green[600],
-                          value: customer.isWithdraw,
+                          value: customer.isGifted,
                           onChanged: (newValue) async {
-                            await _viewModel.changeWithdraw(
+                            await _viewModel.changeGift(
                                 newValue ?? false, customer);
                           },
                         ),

@@ -233,7 +233,6 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                             readOnly: true,
                             controller: totalPointeController,
                             textInputType: TextInputType.number,
-                            isWithdraw: widget.customer.isWithdraw,
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly
                             ],
@@ -242,10 +241,10 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                           Transform.scale(
                             scale: 1.3,
                             child: Checkbox(
-                              value: widget.customer.isWithdraw,
+                              value: widget.customer.isGifted,
                               activeColor: Colors.green[600],
                               onChanged: (newValue) async {
-                                await _vm.changeWithdraw(
+                                await _vm.changeGift(
                                   newValue ?? false,
                                   widget.customer,
                                   isSort: true,

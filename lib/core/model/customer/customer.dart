@@ -12,6 +12,7 @@ class Customer extends BaseModel {
   int owe;
   int bestByYear;
   bool isWithdraw;
+  bool isGifted;
 
 
   Customer({
@@ -24,7 +25,8 @@ class Customer extends BaseModel {
     this.point1 = 0,
     this.owe = 0,
     this.bestByYear = 0,
-    this.isWithdraw = false
+    this.isWithdraw = false,
+    this.isGifted = false,
   }) : super(id: id, createTime: createTime);
 
   Map<String, dynamic> get values {
@@ -37,6 +39,7 @@ class Customer extends BaseModel {
       'owe': owe,
       'createTime': createTime,
       'isWithdraw': isWithdraw,
+      'isGifted': isGifted,
       'customer': this,
     };
   }
@@ -52,6 +55,7 @@ class Customer extends BaseModel {
     int? tienNo,
     int? bestByYear,
     bool? isWithdraw,
+    bool? isGifted,
   }) {
     return Customer(
       id: id ?? this.id,
@@ -64,6 +68,7 @@ class Customer extends BaseModel {
       point: totalPointThuong ?? this.point,
       bestByYear: bestByYear?? this.bestByYear,
       isWithdraw: isWithdraw?? this.isWithdraw,
+      isGifted: isGifted?? this.isGifted,
     );
   }
 

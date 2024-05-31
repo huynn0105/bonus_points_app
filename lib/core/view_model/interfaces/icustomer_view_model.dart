@@ -31,4 +31,5 @@ abstract class ICustomerViewModel with ChangeNotifier {
   set searched(bool value);
 
   Future<void> changeWithdraw(bool isWithdraw, Customer customer,{bool isSort = false});
+  Future<void> changeGift(bool isWithdraw, Customer customer,{bool isSort = false});
 }
