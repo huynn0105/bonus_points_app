@@ -230,7 +230,7 @@ class BoxPoint extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '${format.format(viewModel.currentCustomer?.point1 ?? 0)}đ',
+                  '${format.format(viewModel.currentCustomer?.pointLon ?? 0)}đ',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,

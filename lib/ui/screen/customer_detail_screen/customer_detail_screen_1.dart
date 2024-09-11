@@ -42,7 +42,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     super.initState();
     Customer customer = widget.customer;
     usernameController = TextEditingController(text: customer.name);
-    point1Controller = TextEditingController(text: customer.point1.toString());
+    point1Controller = TextEditingController(text: customer.pointLon.toString());
     oweController = TextEditingController(text: customer.owe.toString());
     totalPointeController =
         TextEditingController(text: customer.bestByYear.toString());
@@ -241,7 +241,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                           Transform.scale(
                             scale: 1.3,
                             child: Checkbox(
-                              value: widget.customer.isGifted,
+                              value: widget.customer.isAutumnGift,
                               activeColor: Colors.green[600],
                               onChanged: (newValue) async {
                                 await _vm.changeGift(
@@ -437,7 +437,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                                                             value)
                                                         .toString();
                                                 break;
-                                              case 1:
+                                              case 3:
                                                 point1Controller.text =
                                                     (int.parse(point1Controller
                                                                 .text) -
@@ -502,7 +502,7 @@ class _TransactionItem extends StatelessWidget {
       switch (detail.type) {
         case 0:
           return detail.value > 0 ? 'Điểm' : 'Đổi điểm';
-        case 1:
+        case 3:
           return detail.value > 0 ? 'Điểm lon' : 'Đổi điểm lon';
         case 2:
           return detail.value > 0 ? 'Nợ' : 'Trả nợ';

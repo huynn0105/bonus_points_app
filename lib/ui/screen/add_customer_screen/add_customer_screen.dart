@@ -203,7 +203,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       phoneNumber: phoneController.text.trim(),
       point: point,
       address: addressController.text.trim(),
-      point1: point1,
+      pointLon: point1,
       owe: owe,
     );
     await viewModel.addCustomer(customerEntity);

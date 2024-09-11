@@ -473,7 +473,7 @@ class CustomerItem extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${format.format(customer.point1)}',
+                          '${format.format(customer.pointLon)}',
                           style: TextStyle(
                             color: Colors.blue[600],
                             fontSize: 17,
@@ -577,7 +577,7 @@ class CustomerItem extends StatelessWidget {
                         scale: 1.3,
                         child: Checkbox(
                           activeColor: Colors.green[600],
-                          value: customer.isGifted,
+                          value: customer.isAutumnGift,
                           onChanged: (newValue) async {
                             await _viewModel.changeGift(
                                 newValue ?? false, customer);

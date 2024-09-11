@@ -7,17 +7,18 @@ part of 'customer.dart';
 // **************************************************************************
 
 Customer _$CustomerFromJson(Map<String, dynamic> json) => Customer(
-         id: json['customerId'] as String,
+      id: json['customerId'] as String?,
       name: json['name'] as String,
       createTime: DateTime.parse(json['createTime'] as String),
       address: json['address'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
-      point: (json['point'] ?? 0) as int,
-      point1: (json['point1'] ?? 0) as int,
-      owe: (json['owe'] ?? 0) as int,
+      point: json['point'] as int? ?? 0,
+      pointLon: json['pointLon'] as int? ?? 0,
+      owe: json['owe'] as int? ?? 0,
       bestByYear: json['bestByYear'] as int? ?? 0,
-      isWithdraw: (json['isWithdraw'] ?? false) as bool,
-      isGifted: (json['isGifted'] ?? false) as bool,
+      isWithdraw: json['isWithdraw'] as bool? ?? false,
+      isGifted: json['isGifted'] as bool? ?? false,
+      isAutumnGift: json['isAutumnGift'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
@@ -27,9 +28,10 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
       'phoneNumber': instance.phoneNumber,
       'address': instance.address,
       'point': instance.point,
-      'point1': instance.point1,
+      'pointLon': instance.pointLon,
       'owe': instance.owe,
       'bestByYear': instance.bestByYear,
       'isWithdraw': instance.isWithdraw,
       'isGifted': instance.isGifted,
+      'isAutumnGift': instance.isAutumnGift,
     };

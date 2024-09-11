@@ -11,8 +11,7 @@ const point_detail_ghi_no = 'point_detail_ghi_no';
 const path = 'point_detail';
 
 class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
-  CollectionReference customerRef =
-      FirebaseFirestore.instance.collection('customers_v3');
+  CollectionReference customerRef = FirebaseFirestore.instance.collection('customers_v3');
 
   List<Customer> _customersToDisplay = [];
   List<Customer> _customersUI = [];
@@ -87,11 +86,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     for (int i = 0; i < _allCustomers.length; i++) {
       final customer = _allCustomers[i];
 
-      final dataPointDetailFb =
-          await customerRef.doc(customer.id).collection('point_detail').get();
-      final customerPointDetails = dataPointDetailFb.docs
-          .map((e) => PointDetail.fromJson(e.data()))
-          .toList();
+      final dataPointDetailFb = await customerRef.doc(customer.id).collection('point_detail').get();
+      final customerPointDetails = dataPointDetailFb.docs.map((e) => PointDetail.fromJson(e.data())).toList();
 
       final pointDetailsOfYear = customerPointDetails
           .where((x) =>
@@ -101,8 +97,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
               lastDayOfYear.isAfter(x.createTime!))
           .toList();
 
-      final totalPointOfYear =
-          pointDetailsOfYear.fold<int>(0, (prev, e) => prev + e.value);
+      final totalPointOfYear = pointDetailsOfYear.fold<int>(0, (prev, e) => prev + e.value);
       final customerUpdate = customer.copyWith(bestByYear: totalPointOfYear);
 
       final total = _customerPointDetails
@@ -114,12 +109,9 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
           .fold<int>(0, (prev, next) => prev + next.value);
 
       try {
-        await customerRef
-            .doc(customerUpdate.id!)
-            .update(customerUpdate.toJson());
+        await customerRef.doc(customerUpdate.id!).update(customerUpdate.toJson());
 
-        print(
-            'successful $i name ${customer.name}: total: $totalPointOfYear ---- $total');
+        print('successful $i name ${customer.name}: total: $totalPointOfYear ---- $total');
       } catch (e) {
         print('fail $i name ${customer.name}');
       }
@@ -166,8 +158,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
     for (var customerDto in allData.docs) {
       try {
-        var customer =
-            Customer.fromJson(customerDto.data() as Map<String, dynamic>);
+        var customer = Customer.fromJson(customerDto.data() as Map<String, dynamic>);
         _allCustomers.add(customer);
       } catch (e) {
         print(customerDto);
@@ -180,8 +171,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       _customersToDisplay.clear();
       _customersToDisplay = _allCustomers
           .where((x) =>
-              x.name.toLowerCase().contains(searchText.toLowerCase()) ||
-              x.phoneNumber!.contains(searchText))
+              x.name.toLowerCase().contains(searchText.toLowerCase()) || x.phoneNumber!.contains(searchText))
           .toList();
 
       _searched = true;
@@ -201,9 +191,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _updateCustomerFirebase(Customer entity) async {
     try {
-      await customerRef
-          .doc(entity.id!)
-          .update(entity.copyWith(createTime: DateTime.now()).toJson());
+      await customerRef.doc(entity.id!).update(entity.copyWith(createTime: DateTime.now()).toJson());
     } catch (e) {}
   }
 
@@ -215,20 +203,12 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _putPointDetailFirebase(PointDetail entity) async {
     try {
-      await customerRef
-          .doc(entity.customerId)
-          .collection(path)
-          .doc(entity.id!)
-          .set(entity.toJson());
+      await customerRef.doc(entity.customerId).collection(path).doc(entity.id!).set(entity.toJson());
     } catch (e) {}
   }
 
   Future<void> _deletePointDetailFirebase(PointDetail entity) async {
-    await customerRef
-        .doc(entity.customerId)
-        .collection(path)
-        .doc(entity.id!)
-        .delete();
+    await customerRef.doc(entity.customerId).collection(path).doc(entity.id!).delete();
   }
 
   @override
@@ -247,8 +227,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         customer = customer.copyWith(bestByYear: customer.point);
       }
     }
-    if (customer.point1 != 0) {
-      pointDetail = pointDetail.copyWith(value: customer.point1, type: 1);
+    if (customer.pointLon != 0) {
+      pointDetail = pointDetail.copyWith(value: customer.pointLon, type: 3);
     }
 
     if (customer.owe != 0) {
@@ -284,14 +264,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> getCustomerPointDetails(String customerId) async {
-    var dataPointDetailFb =
-        await customerRef.doc(customerId).collection('point_detail').get();
+    var dataPointDetailFb = await customerRef.doc(customerId).collection('point_detail').get();
+    print('customerId: $customerId');
 
-    _customerPointDetails = dataPointDetailFb.docs
-        .map((e) => PointDetail.fromJson(e.data()))
-        .toList();
-    _customerPointDetails
-        .sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
+    _customerPointDetails = dataPointDetailFb.docs.map((e) => PointDetail.fromJson(e.data())).toList();
+    _customerPointDetails.sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
 
     // final total = _customerPointDetails
     //     .where((x) => x.createTime?.year == 2023 && x.type == 0 && x.value > 0)
@@ -303,8 +280,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  Future<void> addPoint(
-      Customer customer, String comment, int point, int point1, int owe) async {
+  Future<void> addPoint(Customer customer, String comment, int point, int point1, int owe) async {
     var pointEntity = PointDetail(
       comment: comment,
       value: 0,
@@ -321,8 +297,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
     if (point1 != 0) {
-      customer.point1 += point1;
-      pointEntity = pointEntity.copyWith(value: point1, type: 1);
+      customer.pointLon += point1;
+      pointEntity = pointEntity.copyWith(value: point1, type: 3);
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
 
@@ -335,8 +311,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     notifyListeners();
   }
 
-  Future<void> _updateCustomerAndPointDetail(
-      PointDetail pointEntity, Customer customer) async {
+  Future<void> _updateCustomerAndPointDetail(PointDetail pointEntity, Customer customer) async {
     _customerPointDetails.insert(0, pointEntity);
     await _updateCustomerFirebase(customer);
     await _putPointDetailFirebase(pointEntity);
@@ -359,8 +334,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
         }
         break;
 
-      case 1:
-        customer.point1 -= entity.value;
+      case 3:
+        customer.pointLon -= entity.value;
         break;
 
       case 2:
@@ -393,7 +368,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
         break;
       case FilterType.point1:
-        _allCustomers.sort((b, a) => a.point1.compareTo(b.point1));
+        _allCustomers.sort((b, a) => a.pointLon.compareTo(b.pointLon));
 
         break;
       case FilterType.owe:
@@ -425,10 +400,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     _filterType = filterType;
     final customers = _allCustomers
         .where((x) =>
-            x.createTime!.millisecondsSinceEpoch >=
-                startDate.millisecondsSinceEpoch &&
-            x.createTime!.millisecondsSinceEpoch <=
-                endDate.millisecondsSinceEpoch)
+            x.createTime!.millisecondsSinceEpoch >= startDate.millisecondsSinceEpoch &&
+            x.createTime!.millisecondsSinceEpoch <= endDate.millisecondsSinceEpoch)
         .toList()
         .take(100)
         .toList();
@@ -443,8 +416,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     Customer customer, {
     bool isSort = false,
   }) async {
-    customer.isWithdraw = isWithdraw;
-    final customerUpdate = customer.copyWith(isWithdraw: isWithdraw);
+    customer.isAutumnGift = isWithdraw;
+    final customerUpdate = customer.copyWith(isAutumnGift: isWithdraw);
 
     if (isSort) {
       await updateCustomer(customerUpdate);
@@ -458,12 +431,12 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   @override
   Future<void> changeGift(
-      bool isGifted,
-      Customer customer, {
-        bool isSort = false,
-      }) async {
-    customer.isGifted = isGifted;
-    final customerUpdate = customer.copyWith(isGifted: isGifted);
+    bool isGifted,
+    Customer customer, {
+    bool isSort = false,
+  }) async {
+    customer.isAutumnGift = isGifted;
+    final customerUpdate = customer.copyWith(isAutumnGift: isGifted);
 
     if (isSort) {
       await updateCustomer(customerUpdate);
