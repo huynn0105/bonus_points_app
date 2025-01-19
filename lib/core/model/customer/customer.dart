@@ -11,6 +11,7 @@ class Customer extends BaseModel {
   int pointLon;
   int owe;
   int bestByYear;
+  int bestByYear2024;
   bool isWithdraw;
   bool isGifted;
   bool isAutumnGift;
@@ -26,6 +27,7 @@ class Customer extends BaseModel {
     this.pointLon = 0,
     this.owe = 0,
     this.bestByYear = 0,
+    this.bestByYear2024 = 0,
     this.isWithdraw = false,
     this.isGifted = false,
     this.isAutumnGift = false,
@@ -41,6 +43,7 @@ class Customer extends BaseModel {
       'owe': owe,
       'createTime': createTime,
       'isWithdraw': isWithdraw,
+      'bestByYear2024': bestByYear2024,
       'isGifted': isGifted,
       'isAutumnGift': isAutumnGift,
       'customer': this,
@@ -57,6 +60,7 @@ class Customer extends BaseModel {
     int? totalPointSuaLon,
     int? tienNo,
     int? bestByYear,
+    int? bestByYear2024,
     bool? isAutumnGift,
   }) {
     return Customer(
@@ -69,8 +73,9 @@ class Customer extends BaseModel {
       pointLon: totalPointSuaLon ?? this.pointLon,
       point: totalPointThuong ?? this.point,
       bestByYear: bestByYear?? this.bestByYear,
-      isWithdraw: isWithdraw?? this.isWithdraw,
-      isGifted: isGifted?? this.isGifted,
+      bestByYear2024: bestByYear2024?? this.bestByYear2024,
+      isWithdraw: isWithdraw ?? this.isWithdraw,
+      isGifted: isGifted ?? this.isGifted,
       isAutumnGift: isAutumnGift?? this.isAutumnGift,
     );
   }

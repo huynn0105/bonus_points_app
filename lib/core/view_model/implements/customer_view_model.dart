@@ -68,7 +68,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   Future<void> syncData() async {
     _filterType = FilterType.none;
     _customersUI.clear();
-    //await _copyData();
+    // await _copyData();
     await _getAllCustomers();
     _customersUI.addAll(_allCustomers.take(100));
 
@@ -80,8 +80,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   Future<void> _copyData() async {
     await _getAllCustomers();
     print('start update data, sum ${_allCustomers.length} record');
-    final firstDayOfYear = DateTime(2023, 1, 22, 0, 0, 0);
-    final lastDayOfYear = DateTime(2024, 2, 9, 23, 59, 59);
+    final firstDayOfYear = DateTime(2024, 2, 10, 0, 0, 0);
+    final lastDayOfYear = DateTime(2025, 1, 28, 23, 59, 59);
 
     for (int i = 0; i < _allCustomers.length; i++) {
       final customer = _allCustomers[i];
@@ -98,7 +98,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
           .toList();
 
       final totalPointOfYear = pointDetailsOfYear.fold<int>(0, (prev, e) => prev + e.value);
-      final customerUpdate = customer.copyWith(bestByYear: totalPointOfYear);
+      final customerUpdate = customer.copyWith(bestByYear2024: totalPointOfYear);
 
       final total = _customerPointDetails
           .where((x) =>
@@ -222,9 +222,9 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
     if (customer.point != 0) {
       pointDetail = pointDetail.copyWith(value: customer.point, type: 0);
-      final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
+      final lastDayOfYear = DateTime(2025, 1, 28, 23, 59, 59);
       if (lastDayOfYear.isAfter(pointDetail.createTime!)) {
-        customer = customer.copyWith(bestByYear: customer.point);
+        customer = customer.copyWith(bestByYear2024: customer.point);
       }
     }
     if (customer.pointLon != 0) {
@@ -289,10 +289,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     );
     if (point != 0) {
       pointEntity = pointEntity.copyWith(value: point, type: 0);
-      final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
+      final lastDayOfYear = DateTime(2024, 1, 28, 23, 59, 59);
       customer.point += point;
       if (point > 0 && lastDayOfYear.isAfter(pointEntity.createTime!)) {
-        customer.bestByYear += point;
+        customer.bestByYear2024 += point;
       }
       await _updateCustomerAndPointDetail(pointEntity, customer);
     }
@@ -328,9 +328,9 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     switch (entity.type) {
       case 0:
         customer.point -= entity.value;
-        final lastDayOfYear = DateTime(2024, 9, 2, 23, 59, 59);
+        final lastDayOfYear = DateTime(2024, 1, 28, 23, 59, 59);
         if (lastDayOfYear.isAfter(entity.createTime!)) {
-          customer.bestByYear -= entity.value;
+          customer.bestByYear2024 -= entity.value;
         }
         break;
 
@@ -380,7 +380,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
         break;
       case FilterType.buybest:
-        _allCustomers.sort((b, a) => a.bestByYear.compareTo(b.bestByYear));
+        _allCustomers.sort((b, a) => a.bestByYear2024.compareTo(b.bestByYear2024));
         notifyListeners();
         break;
       default:

@@ -506,7 +506,7 @@ class CustomerItem extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      'Tổng điểm năm 2023: ${format.format(customer.bestByYear)}',
+                      'Tổng điểm năm 2024: ${format.format(customer.bestByYear2024)}',
                       style: TextStyle(
                         color: Colors.green[600],
                         fontSize: 15,

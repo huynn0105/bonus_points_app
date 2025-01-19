@@ -45,7 +45,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
     point1Controller = TextEditingController(text: customer.pointLon.toString());
     oweController = TextEditingController(text: customer.owe.toString());
     totalPointeController =
-        TextEditingController(text: customer.bestByYear.toString());
+        TextEditingController(text: customer.bestByYear2024.toString());
     phoneController = TextEditingController(text: customer.phoneNumber);
     pointController = TextEditingController(text: customer.point.toString());
     addressController = TextEditingController(text: customer.address);
@@ -229,7 +229,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                           MyTextFormField(
                             width: 1.sw / 5,
                             lable:
-                                'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2023 (Âm Lịch)',
+                                'Tổng điểm thường (Không tính đã đổi điểm) tính từ 2024 (Âm Lịch)',
                             readOnly: true,
                             controller: totalPointeController,
                             textInputType: TextInputType.number,
