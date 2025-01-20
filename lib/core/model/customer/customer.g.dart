@@ -20,6 +20,7 @@ Customer _$CustomerFromJson(Map<String, dynamic> json) => Customer(
       isWithdraw: json['isWithdraw'] as bool? ?? false,
       isGifted: json['isGifted'] as bool? ?? false,
       isAutumnGift: json['isAutumnGift'] as bool? ?? false,
+      isLunarGift: json['isLunarGift'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
@@ -35,5 +36,6 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
       'bestByYear2024': instance.bestByYear2024,
       'isWithdraw': instance.isWithdraw,
       'isGifted': instance.isGifted,
+      'isLunarGift': instance.isLunarGift,
       'isAutumnGift': instance.isAutumnGift,
     };

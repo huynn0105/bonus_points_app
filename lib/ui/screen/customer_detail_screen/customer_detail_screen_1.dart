@@ -241,7 +241,7 @@ class _CustomerDetailScreen1State extends State<CustomerDetailScreen1> {
                           Transform.scale(
                             scale: 1.3,
                             child: Checkbox(
-                              value: widget.customer.isAutumnGift,
+                              value: widget.customer.isLunarGift,
                               activeColor: Colors.green[600],
                               onChanged: (newValue) async {
                                 await _vm.changeGift(

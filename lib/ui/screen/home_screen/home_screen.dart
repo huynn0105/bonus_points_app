@@ -577,7 +577,7 @@ class CustomerItem extends StatelessWidget {
                         scale: 1.3,
                         child: Checkbox(
                           activeColor: Colors.green[600],
-                          value: customer.isAutumnGift,
+                          value: customer.isLunarGift,
                           onChanged: (newValue) async {
                             await _viewModel.changeGift(
                                 newValue ?? false, customer);

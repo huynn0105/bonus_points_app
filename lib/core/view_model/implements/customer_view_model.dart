@@ -416,8 +416,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     Customer customer, {
     bool isSort = false,
   }) async {
-    customer.isAutumnGift = isWithdraw;
-    final customerUpdate = customer.copyWith(isAutumnGift: isWithdraw);
+    customer.isLunarGift = isWithdraw;
+    final customerUpdate = customer.copyWith(isLunarGift: isWithdraw);
 
     if (isSort) {
       await updateCustomer(customerUpdate);
@@ -435,8 +435,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     Customer customer, {
     bool isSort = false,
   }) async {
-    customer.isAutumnGift = isGifted;
-    final customerUpdate = customer.copyWith(isAutumnGift: isGifted);
+    customer.isLunarGift = isGifted;
+    final customerUpdate = customer.copyWith(isLunarGift: isGifted);
 
     if (isSort) {
       await updateCustomer(customerUpdate);
