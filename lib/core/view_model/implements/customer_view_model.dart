@@ -12,7 +12,8 @@ const path = 'point_detail';
 
 class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   CollectionReference customerRef = FirebaseFirestore.instance.collection('customers_v3');
-
+  final firstDayOfYear = DateTime(2024, 2, 10, 0, 0, 0);
+  final lastDayOfYear = DateTime(2025, 1, 28, 23, 59, 59);
   List<Customer> _customersToDisplay = [];
   List<Customer> _customersUI = [];
   List<PointDetail> _pointDetailThuong = [];
@@ -80,8 +81,7 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   Future<void> _copyData() async {
     await _getAllCustomers();
     print('start update data, sum ${_allCustomers.length} record');
-    final firstDayOfYear = DateTime(2024, 2, 10, 0, 0, 0);
-    final lastDayOfYear = DateTime(2025, 1, 28, 23, 59, 59);
+
 
     for (int i = 0; i < _allCustomers.length; i++) {
       final customer = _allCustomers[i];
@@ -222,7 +222,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
     if (customer.point != 0) {
       pointDetail = pointDetail.copyWith(value: customer.point, type: 0);
-      final lastDayOfYear = DateTime(2025, 1, 28, 23, 59, 59);
       if (lastDayOfYear.isAfter(pointDetail.createTime!)) {
         customer = customer.copyWith(bestByYear2024: customer.point);
       }
@@ -289,7 +288,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     );
     if (point != 0) {
       pointEntity = pointEntity.copyWith(value: point, type: 0);
-      final lastDayOfYear = DateTime(2024, 1, 28, 23, 59, 59);
       customer.point += point;
       if (point > 0 && lastDayOfYear.isAfter(pointEntity.createTime!)) {
         customer.bestByYear2024 += point;
@@ -328,7 +326,6 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     switch (entity.type) {
       case 0:
         customer.point -= entity.value;
-        final lastDayOfYear = DateTime(2024, 1, 28, 23, 59, 59);
         if (lastDayOfYear.isAfter(entity.createTime!)) {
           customer.bestByYear2024 -= entity.value;
         }
