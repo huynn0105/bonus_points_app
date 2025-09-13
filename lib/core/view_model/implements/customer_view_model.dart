@@ -1,6 +1,7 @@
 import 'package:bonus_points_app/core/model/customer/customer.dart';
 import 'package:bonus_points_app/core/model/point_detail/point_detail.dart';
 import 'package:bonus_points_app/core/view_model/interfaces/icustomer_view_model.dart';
+import 'package:bonus_points_app/global/diacritic.dart';
 import 'package:bonus_points_app/global/enum.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +12,8 @@ const point_detail_ghi_no = 'point_detail_ghi_no';
 const path = 'point_detail';
 
 class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
-  CollectionReference customerRef = FirebaseFirestore.instance.collection('customers_v3');
+  CollectionReference customerRef =
+      FirebaseFirestore.instance.collection('customers_v3');
   final firstDayOfYear = DateTime(2024, 2, 10, 0, 0, 0);
   final lastDayOfYear = DateTime(2025, 1, 28, 23, 59, 59);
   List<Customer> _customersToDisplay = [];
@@ -82,86 +84,90 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     await _getAllCustomers();
     print('start update data, sum ${_allCustomers.length} record');
 
-
     for (int i = 0; i < _allCustomers.length; i++) {
       final customer = _allCustomers[i];
 
-      final dataPointDetailFb = await customerRef.doc(customer.id).collection('point_detail').get();
-      final customerPointDetails = dataPointDetailFb.docs.map((e) => PointDetail.fromJson(e.data())).toList();
-
-      final pointDetailsOfYear = customerPointDetails
-          .where((x) =>
-              x.type == 0 &&
-              x.value > 0 &&
-              firstDayOfYear.isBefore(x.createTime!) &&
-              lastDayOfYear.isAfter(x.createTime!))
+      final dataPointDetailFb =
+          await customerRef.doc(customer.id).collection('point_detail').get();
+      final customerPointDetails = dataPointDetailFb.docs
+          .map((e) => PointDetail.fromJson(e.data()))
           .toList();
 
-      final totalPointOfYear = pointDetailsOfYear.fold<int>(0, (prev, e) => prev + e.value);
-      final customerUpdate = customer.copyWith(bestByYear2024: totalPointOfYear);
+      final pointList = customerPointDetails
+          .where((x) => x.type == 0 && x.createTime != null)
+          .toList();
+      if (pointList.isNotEmpty) {
+        final removePoint =
+            pointList.where((x) => x.comment.contains('Xoá điểm vì')).toList();
+        if (removePoint.isNotEmpty) {
+          for (var entity in removePoint) {
+            pointList.removeWhere((x) => x.id == entity.id);
+            print(
+                '${customer.name} xoá điểm: ${entity.value} vì ${entity.comment}');
+            await _deletePointDetailFirebase(entity);
+          }
+        }
+        pointList.sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
 
-      final total = _customerPointDetails
-          .where((x) =>
-              firstDayOfYear.isBefore(x.createTime!) &&
-              lastDayOfYear.isAfter(x.createTime!) &&
-              x.type == 0 &&
-              x.value > 0)
-          .fold<int>(0, (prev, next) => prev + next.value);
+        final lastBuyIn =
+            DateTime.now().difference(pointList.first.createTime!).inDays;
 
-      try {
-        await customerRef.doc(customerUpdate.id!).update(customerUpdate.toJson());
-
-        print('successful $i name ${customer.name}: total: $totalPointOfYear ---- $total');
-      } catch (e) {
-        print('fail $i name ${customer.name}');
+        final totalThuong = pointList
+            .where((x) => x.type == 0)
+            .fold<int>(0, (prev, e) => prev + e.value);
+        try {
+          if (totalThuong != customer.point) {
+            final customerUpdate =
+                customer.copyWith(point: totalThuong, pointOld: customer.point);
+            await customerRef
+                .doc(customerUpdate.id!)
+                .update(customerUpdate.toJson());
+            print(
+                'update điểm cho $i name ${customer.name} ---- new ${customerUpdate.point} - old: ${customer.point} thành công!');
+          } else {
+            print(
+                'không update $i name ${customer.name} ---- ${customer.point} điểm bằng nhau');
+          }
+        } catch (e) {
+          print('fail $i name ${customer.name}');
+        }
+        if (lastBuyIn > 730) {
+          final customerUpdate =
+              customer.copyWith(point: 0, pointOld: totalThuong);
+          try {
+            await customerRef
+                .doc(customerUpdate.id!)
+                .update(customerUpdate.toJson());
+            var pointEntity = PointDetail(
+              comment: 'Xoá điểm vì KH quá đã hơn 1 năm rưỡi không mua hàng',
+              value: -totalThuong,
+              customerId: customer.id!,
+              type: 0,
+            );
+            await _putPointDetailFirebase(pointEntity);
+            print(
+                'Xoá điểm ${totalThuong} cho ${customer.name} ---- ${customerUpdate.point} thành công!');
+          } catch (e) {
+            print('fail $i name ${customer.name}');
+          }
+        }
       }
     }
     print('update data successful + ${_allCustomers.length}');
-
-    // for (int i = 0; i < _allCustomers.length; i++) {
-    //   for (int i = 0; i < _allCustomers.length; i++) {
-    //     var customer = _allCustomers[i];
-    //     String customerId = customer.id.toString();
-    //     var dataPointDetailFb =
-    //         await customerRef.doc(customerId).collection('point_detail').get();
-
-    //     _customerPointDetails = dataPointDetailFb.docs
-    //         .map((e) => PointDetail.fromJson(e.data()))
-    //         .toList();
-    //     final listInYear = _customerPointDetails
-    //         .where((element) =>
-    //             element.type == 0 &&
-    //             element.value > 0 &&
-    //             (element.createTime!.compareTo(firstDayOfYear) >= 0))
-    //         .toList();
-
-    //     int bestByYear = listInYear.fold(0, (prev, e) => prev + e.value);
-    //     customer.bestByYear = bestByYear;
-
-    //     // await customers3.doc(customerId).set(customer.toJson());
-    //     // for (var pointDetail in _customerPointDetails) {
-    //     //     await customers3
-    //     //     .doc(pointDetail.customerId)
-    //     //     .collection(path)
-    //     //     .doc(pointDetail.id!)
-
-    //     //     .set(pointDetail.toJson());
-    //     // }
-    //     print('successful $i name ${customer.name}');
-    //  }
-    //   print('copy data successful + ${_allCustomers.length}');
-    // }
   }
 
   Future<void> _getAllCustomers() async {
     var allData = await customerRef.get();
 
     for (var customerDto in allData.docs) {
-      try {
-        var customer = Customer.fromJson(customerDto.data() as Map<String, dynamic>);
-        _allCustomers.add(customer);
-      } catch (e) {
-        print(customerDto);
+      if (customerDto.data() != null) {
+        try {
+          var customer =
+              Customer.fromJson(customerDto.data() as Map<String, dynamic>);
+          _allCustomers.add(customer);
+        } catch (e) {
+          print(customerDto);
+        }
       }
     }
   }
@@ -171,7 +177,11 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
       _customersToDisplay.clear();
       _customersToDisplay = _allCustomers
           .where((x) =>
-              x.name.toLowerCase().contains(searchText.toLowerCase()) || x.phoneNumber!.contains(searchText))
+              x.name
+                  .toLowerCase()
+                  .unAccent
+                  .contains(searchText.toLowerCase().unAccent) ||
+              x.phoneNumber!.contains(searchText))
           .toList();
 
       _searched = true;
@@ -191,7 +201,9 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _updateCustomerFirebase(Customer entity) async {
     try {
-      await customerRef.doc(entity.id!).update(entity.copyWith(createTime: DateTime.now()).toJson());
+      await customerRef
+          .doc(entity.id!)
+          .update(entity.copyWith(createTime: DateTime.now()).toJson());
     } catch (e) {}
   }
 
@@ -203,12 +215,20 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
   Future<void> _putPointDetailFirebase(PointDetail entity) async {
     try {
-      await customerRef.doc(entity.customerId).collection(path).doc(entity.id!).set(entity.toJson());
+      await customerRef
+          .doc(entity.customerId)
+          .collection(path)
+          .doc(entity.id!)
+          .set(entity.toJson());
     } catch (e) {}
   }
 
   Future<void> _deletePointDetailFirebase(PointDetail entity) async {
-    await customerRef.doc(entity.customerId).collection(path).doc(entity.id!).delete();
+    await customerRef
+        .doc(entity.customerId)
+        .collection(path)
+        .doc(entity.id!)
+        .delete();
   }
 
   @override
@@ -263,11 +283,15 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   Future<void> getCustomerPointDetails(String customerId) async {
-    var dataPointDetailFb = await customerRef.doc(customerId).collection('point_detail').get();
+    var dataPointDetailFb =
+        await customerRef.doc(customerId).collection('point_detail').get();
     print('customerId: $customerId');
 
-    _customerPointDetails = dataPointDetailFb.docs.map((e) => PointDetail.fromJson(e.data())).toList();
-    _customerPointDetails.sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
+    _customerPointDetails = dataPointDetailFb.docs
+        .map((e) => PointDetail.fromJson(e.data()))
+        .toList();
+    _customerPointDetails
+        .sort((e1, e2) => e2.createTime!.compareTo(e1.createTime!));
 
     // final total = _customerPointDetails
     //     .where((x) => x.createTime?.year == 2023 && x.type == 0 && x.value > 0)
@@ -279,7 +303,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
   }
 
   @override
-  Future<void> addPoint(Customer customer, String comment, int point, int point1, int owe) async {
+  Future<void> addPoint(
+      Customer customer, String comment, int point, int point1, int owe) async {
     var pointEntity = PointDetail(
       comment: comment,
       value: 0,
@@ -309,7 +334,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     notifyListeners();
   }
 
-  Future<void> _updateCustomerAndPointDetail(PointDetail pointEntity, Customer customer) async {
+  Future<void> _updateCustomerAndPointDetail(
+      PointDetail pointEntity, Customer customer) async {
     _customerPointDetails.insert(0, pointEntity);
     await _updateCustomerFirebase(customer);
     await _putPointDetailFirebase(pointEntity);
@@ -377,7 +403,8 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
 
         break;
       case FilterType.buybest:
-        _allCustomers.sort((b, a) => a.bestByYear2024.compareTo(b.bestByYear2024));
+        _allCustomers
+            .sort((b, a) => a.bestByYear2024.compareTo(b.bestByYear2024));
         notifyListeners();
         break;
       default:
@@ -397,8 +424,10 @@ class CustomerViewModel with ChangeNotifier implements ICustomerViewModel {
     _filterType = filterType;
     final customers = _allCustomers
         .where((x) =>
-            x.createTime!.millisecondsSinceEpoch >= startDate.millisecondsSinceEpoch &&
-            x.createTime!.millisecondsSinceEpoch <= endDate.millisecondsSinceEpoch)
+            x.createTime!.millisecondsSinceEpoch >=
+                startDate.millisecondsSinceEpoch &&
+            x.createTime!.millisecondsSinceEpoch <=
+                endDate.millisecondsSinceEpoch)
         .toList()
         .take(100)
         .toList();
@@ -450,3 +479,12 @@ enum PointType {
   lon,
   no,
 }
+
+extension UnAccent on String {
+  String get unAccent {
+    return removeDiacritics(this);
+  }
+}
+
+String removeDiacritics(String text) =>
+    String.fromCharCodes(replaceCodeUnits(text.codeUnits));

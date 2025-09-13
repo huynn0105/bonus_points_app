@@ -8,11 +8,12 @@ part of 'customer.dart';
 
 Customer _$CustomerFromJson(Map<String, dynamic> json) => Customer(
       id: json['customerId'] as String?,
-      name: json['name'] as String,
+      name: json['name'] ?? '',
       createTime: DateTime.parse(json['createTime'] as String),
       address: json['address'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       point: json['point'] as int? ?? 0,
+      pointOld: json['pointOld'] as int? ?? 0,
       pointLon: json['pointLon'] as int? ?? 0,
       owe: json['owe'] as int? ?? 0,
       bestByYear: json['bestByYear'] as int? ?? 0,
@@ -30,6 +31,7 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) => <String, dynamic>{
       'phoneNumber': instance.phoneNumber,
       'address': instance.address,
       'point': instance.point,
+      'pointOld': instance.pointOld,
       'pointLon': instance.pointLon,
       'owe': instance.owe,
       'bestByYear': instance.bestByYear,

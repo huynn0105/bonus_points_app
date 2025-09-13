@@ -113,11 +113,12 @@ class _AddPointState extends State<AddPoint> {
         ),
         SizedBox(height: 50),
         Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             MyButton(
               child: Text(
                 'Huỷ bỏ',
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
                 Get.back();
@@ -128,6 +129,7 @@ class _AddPointState extends State<AddPoint> {
             MyButton(
               child: Text(
                 'Đổi điểm',
+                style: TextStyle(color: Colors.white),
               ),
               onPressed: () async {
                 _dialog.show(message: 'Đợi 1 lát');
@@ -151,7 +153,10 @@ class _AddPointState extends State<AddPoint> {
             ),
             SizedBox(width: 20),
             MyButton(
-              child: Text('Thêm điểm'),
+              child: Text(
+                'Thêm điểm',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () async {
                 _dialog.show(message: 'Đợi 1 lát');
                 int point = int.tryParse(pointController.text.trim()) ?? 0;

@@ -8,6 +8,7 @@ class Customer extends BaseModel {
   String? phoneNumber;
   String? address;
   int point;
+  int pointOld;
   int pointLon;
   int owe;
   int bestByYear;
@@ -25,6 +26,7 @@ class Customer extends BaseModel {
     this.phoneNumber,
     this.address,
     this.point = 0,
+    this.pointOld = 0,
     this.pointLon = 0,
     this.owe = 0,
     this.bestByYear = 0,
@@ -41,6 +43,7 @@ class Customer extends BaseModel {
       'phoneNumber': phoneNumber,
       'address': address,
       'point': point,
+      'pointNew': pointOld,
       'pointLon': pointLon,
       'owe': owe,
       'createTime': createTime,
@@ -59,8 +62,9 @@ class Customer extends BaseModel {
     String? name,
     String? phoneNumber,
     String? address,
-    int? totalPointThuong,
-    int? totalPointSuaLon,
+    int? point,
+    int? pointOld,
+    int? pointLon,
     int? tienNo,
     int? bestByYear,
     int? bestByYear2024,
@@ -74,8 +78,9 @@ class Customer extends BaseModel {
       address: address ?? this.address,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       owe: tienNo ?? this.owe,
-      pointLon: totalPointSuaLon ?? this.pointLon,
-      point: totalPointThuong ?? this.point,
+      pointLon: pointLon ?? this.pointLon,
+      pointOld: pointOld ?? this.pointOld,
+      point: point ?? this.point,
       bestByYear: bestByYear?? this.bestByYear,
       bestByYear2024: bestByYear2024?? this.bestByYear2024,
       isWithdraw: isWithdraw ?? this.isWithdraw,

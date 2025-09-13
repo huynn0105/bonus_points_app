@@ -9,7 +9,6 @@ class PointDetail extends BaseModel {
   int value;
   String comment;
   int type; //0 = point (nomal) | 1 = point1 (milk bottle) | 2 = owe;
-  
 
   PointDetail({
     String? id,
@@ -29,15 +28,14 @@ class PointDetail extends BaseModel {
         other.value == value;
   }
 
-    PointDetail copyWith({
+  PointDetail copyWith({
     String? id,
     DateTime? createTime,
     String? customerId,
     int? value,
     String? comment,
-    int ? type,
-
-  }){
+    int? type,
+  }) {
     return PointDetail(
       id: id ?? this.id,
       customerId: customerId ?? this.customerId,
@@ -45,7 +43,6 @@ class PointDetail extends BaseModel {
       value: value ?? this.value,
       comment: comment ?? this.comment,
       type: type ?? this.type,
-     
     );
   }
 

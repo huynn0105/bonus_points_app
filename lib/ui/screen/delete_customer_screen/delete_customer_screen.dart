@@ -19,7 +19,7 @@ class DeleteCustomer extends StatelessWidget {
   Widget build(BuildContext context) {
     final _dialog = SimpleFontelicoProgressDialog(
         context: context, barrierDimisable: false);
-    
+
     return SizedBox(
       width: 450,
       child: Column(
@@ -50,17 +50,18 @@ class DeleteCustomer extends StatelessWidget {
           ),
           Divider(),
           SizedBox(height: 20),
-          Text('Bạn muốn xoá khách hàng này?'),
+          Text('Bạn muốn xoá khách hàng này?', style: TextStyle(fontSize: 18)),
           SizedBox(height: 20),
           Divider(),
           SizedBox(height: 15),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               MyButton(
                   width: 150,
                   child: Text(
                     'Huỷ bỏ',
+                    style: TextStyle(color: Colors.white),
                   ),
                   color: Colors.grey,
                   onPressed: () {
@@ -71,7 +72,7 @@ class DeleteCustomer extends StatelessWidget {
                   width: 150,
                   child: Text(
                     'Xoá',
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(color: Colors.white),
                   ),
                   color: Color(0xFFEA2027),
                   onPressed: () async {

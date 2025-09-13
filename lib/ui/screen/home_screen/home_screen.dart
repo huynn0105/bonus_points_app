@@ -173,12 +173,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Icon(
                                 Icons.filter_list_alt,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                               SizedBox(width: 10),
                               Text(
                                 'Lọc ngày',
-                                style: TextStyle(color: Colors.black),
+                                style: TextStyle(color: Colors.white),
                               ),
                             ],
                           ),
@@ -198,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: const Color(0xFFeadc03),
                           child: Text(
                             'Thêm khách hàng',
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: Colors.white),
                           ),
                           borderRadius: 20,
                         ),
@@ -355,7 +355,7 @@ class MyFunction extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-          Text(title),
+          Text(title, style: TextStyle(color: Colors.white)),
         ],
       ),
       color: color,
